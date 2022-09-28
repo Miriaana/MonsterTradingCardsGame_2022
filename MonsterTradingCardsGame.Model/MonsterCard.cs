@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
-namespace MonsterTradingCardsGame
+namespace MonsterTradingCardsGame.Model
 {
-    internal class MonsterCard : Card
+    public class MonsterCard : Card
     {
         public MonsterCard(string name, int damage, Element element) : base(name, damage, element)
         {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MonsterTradingCardsGame
+namespace MonsterTradingCardsGame.Model
 {
-    internal abstract class Card
+    public abstract class Card
     {
         public enum Element { fire, water, earth };   //what accessability?
         public enum CardType { spell, monster };
@@ -15,7 +15,7 @@ namespace MonsterTradingCardsGame
         protected CardType _type;
         protected Element _element;
         protected readonly int _damage;
-        
+
         public Card(string name, int damage, Element element)
         {
             _name = name;
