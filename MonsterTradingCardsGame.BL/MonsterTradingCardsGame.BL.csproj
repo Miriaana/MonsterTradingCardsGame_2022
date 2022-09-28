@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MonsterTradingCardsGame.DAL\MonsterTradingCardsGame.DAL.csproj" />
     <ProjectReference Include="..\MonsterTradingCardsGame.Model\MonsterTradingCardsGame.Model.csproj" />
   </ItemGroup>
 

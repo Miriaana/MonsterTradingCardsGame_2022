@@ -17,6 +17,10 @@ postgreSQLRepository.CreateUser(player1);
 
 game.PlayBattle(player1, player2);
 
+var newUser = new User("Karl", "1111");
+var userHandler = new UserHandler();
+userHandler.RegisterUser(newUser);
+
 //Console.WriteLine($"My name is {user1.Username}.");
 //user1.Username = "Vanessa";
 //Console.WriteLine($"But now I changed it to {user1.Username}.");
