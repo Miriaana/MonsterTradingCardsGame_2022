@@ -5,11 +5,13 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonsterTradingCardsGame", "MonsterTradingCardsGame\MonsterTradingCardsGame.csproj", "{6DD4867C-190F-4550-A190-3A9AA0809750}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonsterTradingCardsGame.Model", "MonsterTradingCardsGame.Model\MonsterTradingCardsGame.Model.csproj", "{AA1DE4C5-81CC-417F-A8C7-89928C7B5D1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonsterTradingCardsGame.Model", "MonsterTradingCardsGame.Model\MonsterTradingCardsGame.Model.csproj", "{AA1DE4C5-81CC-417F-A8C7-89928C7B5D1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonsterTradingCardsGame.BL", "MonsterTradingCardsGame.BL\MonsterTradingCardsGame.BL.csproj", "{124264DE-E002-46C4-AF7F-84F8B0F8CD79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonsterTradingCardsGame.BL", "MonsterTradingCardsGame.BL\MonsterTradingCardsGame.BL.csproj", "{124264DE-E002-46C4-AF7F-84F8B0F8CD79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonsterTradingCardsGame.DAL", "MonsterTradingCardsGame.DAL\MonsterTradingCardsGame.DAL.csproj", "{6BCECEFB-310C-405D-BEBA-E5E5C66CE926}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonsterTradingCardsGame.DAL", "MonsterTradingCardsGame.DAL\MonsterTradingCardsGame.DAL.csproj", "{6BCECEFB-310C-405D-BEBA-E5E5C66CE926}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonsterTradingCardsGame.BL.Test", "MonsterTradingCardsGame.BL.Test\MonsterTradingCardsGame.BL.Test.csproj", "{B722220F-A61D-4404-A635-2A75B9D2C03D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{6BCECEFB-310C-405D-BEBA-E5E5C66CE926}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BCECEFB-310C-405D-BEBA-E5E5C66CE926}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BCECEFB-310C-405D-BEBA-E5E5C66CE926}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B722220F-A61D-4404-A635-2A75B9D2C03D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B722220F-A61D-4404-A635-2A75B9D2C03D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B722220F-A61D-4404-A635-2A75B9D2C03D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B722220F-A61D-4404-A635-2A75B9D2C03D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
