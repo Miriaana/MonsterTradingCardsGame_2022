@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MonsterTradingCardsGame.BL\MTCGame.BL.csproj" />
+    <ProjectReference Include="..\MonsterTradingCardsGame.DAL\MTCGame.DAL.csproj" />
+    <ProjectReference Include="..\MonsterTradingCardsGame.Model\MTCGame.Model.csproj" />
+  </ItemGroup>
+
+</Project>
