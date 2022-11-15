@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MTCGame.Server
+namespace MTCGame.Server.HTTP
 {
-    internal class HttpResponse
+    public class HttpResponse
     {
         private StreamWriter writer;
         public int ResponseCode { get; set; }
         public string ResponseText { get; set; }
+
+        public Dictionary<string, string> Headers = new();
         public string ResponseContent { get; set; }
 
         public HttpResponse(StreamWriter writer)
@@ -20,7 +22,8 @@ namespace MTCGame.Server
 
         public void Process()
         {
-            writer.WriteLine($"HTTP/1.1 {ResponseCode} {ResponseText}");
+            Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: HTTP/1.1 {ResponseCode} {ResponseText}");
+            writer.WriteLine($"HTTP/1.1 {ResponseCode} {ResponseText}"); //handle exception if client closes down
             // headers... (skipped)
             writer.WriteLine();
             writer.WriteLine(ResponseContent);
