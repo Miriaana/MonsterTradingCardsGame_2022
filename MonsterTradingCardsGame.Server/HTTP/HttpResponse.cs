@@ -18,6 +18,8 @@ namespace MTCGame.Server.HTTP
         public HttpResponse(StreamWriter writer)
         {
             this.writer = writer;
+            ResponseText = string.Empty;
+            ResponseContent = string.Empty;
         }
 
         public void Process()

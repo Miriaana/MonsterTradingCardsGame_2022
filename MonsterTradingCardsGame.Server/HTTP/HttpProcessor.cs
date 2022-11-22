@@ -19,14 +19,14 @@ namespace MTCGame.Server.HTTP
 
         public void run()
         {
-            Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: started processing"); Console.Out.Flush();
+            Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: started processing");
             var reader = new StreamReader(clientSocket.GetStream());
             var request = new HttpRequest(reader);
-            request.Parse();
 
             var writer = new StreamWriter(clientSocket.GetStream()) { AutoFlush = true };
             var response = new HttpResponse(writer);
-            
+
+            request.Parse();
 
             //Verarbeitung und Aufrufen des BLs
             //...unterschiedliche Endpunkte
@@ -42,8 +42,8 @@ namespace MTCGame.Server.HTTP
             }
             else
             {
-                response.ResponseCode = 200;    //also enum
-                response.ResponseText = "OK";
+                response.ResponseCode = 404;                    //200 //TODO: also enum
+                response.ResponseText = "Path not found";       //"OK"
                 response.ResponseContent = "<html><body>Hello World!</body></html>";
                 response.Headers.Add("Content-Length", response.ResponseContent.Length.ToString());
                 response.Headers.Add("Content-Type", "text/plain"); //application/json 

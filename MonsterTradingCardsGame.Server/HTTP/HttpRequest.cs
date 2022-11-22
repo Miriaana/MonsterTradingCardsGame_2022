@@ -10,7 +10,7 @@ namespace MTCGame.Server.HTTP
     {
         private StreamReader reader;
 
-        public HttpMethod Method { get; private set; }
+        public EHttpMethod Method { get; private set; }
         public string Path { get; private set; } //string[]
 
         public Dictionary<string, string> QueryParams = new();
@@ -34,7 +34,7 @@ namespace MTCGame.Server.HTTP
             Console.WriteLine($"        {line}");
             var firstLineParts = line.Split(" ");   //error handling: make sure you actually got a line
             //check, are there actually 3 parts
-            Method = (HttpMethod)Enum.Parse(typeof(HttpMethod), firstLineParts[0]); //error handling
+            Method = (EHttpMethod)Enum.Parse(typeof(EHttpMethod), firstLineParts[0]); //error handling
             Path = firstLineParts[1];
             var pathParts = Path.Split('?');
             if (pathParts.Length == 2)
@@ -66,7 +66,7 @@ namespace MTCGame.Server.HTTP
                     break;
 
                 var headerParts = line.Split(": ");
-                headers[headerParts[0]] = headerParts[1]; //to´do, replace with sth that makes sense
+                headers[headerParts[0]] = headerParts[1];
             }
 
             // content...

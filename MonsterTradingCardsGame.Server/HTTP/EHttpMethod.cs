@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MTCGame.Server.HTTP
 {
-    public enum HttpMethod
+    public enum EHttpMethod
     {
         GET,
         POST,
