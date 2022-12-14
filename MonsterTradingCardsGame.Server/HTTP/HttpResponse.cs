@@ -25,12 +25,22 @@ namespace MTCGame.Server.HTTP
         public void Process()
         {
             Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: HTTP/1.1 {ResponseCode} {ResponseText}");
-            writer.WriteLine($"HTTP/1.1 {ResponseCode} {ResponseText}"); //handle exception if client closes down
-            // headers... (skipped)
-            writer.WriteLine();
-            writer.WriteLine(ResponseContent);
-            writer.Flush();
-            writer.Close();
+            try
+            {
+                writer.WriteLine($"HTTP/1.1 {ResponseCode} {ResponseText}"); //handle exception if client closes down
+                                                                             // headers... (skipped)
+                writer.WriteLine();
+                writer.WriteLine(ResponseContent);
+                writer.Flush();
+                writer.Close();
+                Console.WriteLine("Writer managed to send response");
+            }
+            catch (System.ObjectDisposedException)
+            {
+                Console.WriteLine("Writer closed before sending response");
+            }
         }
+
+        //opt todo: implement func to automatically set code/text/content
     }
 }

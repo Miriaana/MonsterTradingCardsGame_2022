@@ -14,7 +14,7 @@ namespace MonsterTradingCardsGame.BL
         {
             var dal = new PostgreSQLRepository();
             //DBConnection db = new DBConnection();
-            dal.CreateUser(newUser);
+            //dal.CreateUser(newUser);
         }
 
         //unregister()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace MTCGame.Server.HTTP
         private StreamReader reader;
 
         public EHttpMethod Method { get; private set; }
-        public string Path { get; private set; } //string[]
+        public List<string> Path { get; private set; } //string[]
 
         public Dictionary<string, string> QueryParams = new();
 
@@ -28,16 +29,30 @@ namespace MTCGame.Server.HTTP
 
         public void Parse()
         {
-            //todo: rewrite that whole mess
-            // first line contains HTTP METHOD PATH and PROTOCOL
+            // first line contains HTTP-METHOD, PATH and PROTOCOL
             string line = reader.ReadLine();
-            Console.WriteLine($"        {line}");
-            var firstLineParts = line.Split(" ");   //error handling: make sure you actually got a line
-            //check, are there actually 3 parts
+            if(line == null)
+            {
+                Console.WriteLine("No line received");
+                throw new Exception("server didn't receive a readable request");
+            }
+            Console.WriteLine($"\t{line}");
+            var firstLineParts = line.Split(" ");
+            if(firstLineParts.Length != 3)
+            {
+                Console.WriteLine("Not able to correctly parse first line");
+                throw new Exception("request didn't follow the http protocol");
+            }
             Method = (EHttpMethod)Enum.Parse(typeof(EHttpMethod), firstLineParts[0]); //error handling
-            Path = firstLineParts[1];
-            var pathParts = Path.Split('?');
-            if (pathParts.Length == 2)
+            ProtocolVersion = firstLineParts[2];
+
+            var fullPath = firstLineParts[1];
+            
+            var pathParts = fullPath.Split('?');    //split path and optional parameters
+
+            Path = pathParts[0].Split("/", StringSplitOptions.RemoveEmptyEntries).ToList();//save path
+
+            if (pathParts.Length == 2)              //parse optional params
             {
                 var queryParams = pathParts[1].Split("&");
                 foreach (string queryParam in queryParams)
@@ -49,16 +64,16 @@ namespace MTCGame.Server.HTTP
                     }
                     else
                     {
-                        //??
+                        Console.WriteLine("Invalid QueryParams");
+                        throw new Exception("User sent invalid request");
                     }
                 }
             }
 
-            ProtocolVersion = firstLineParts[2];
+            Console.WriteLine($"Path: /{string.Join("/", Path.ToArray())} \tParams: {string.Join(",", QueryParams)}");
 
-            // headers
-            //todo: rewrite, how work?!?
-            while ((line = reader.ReadLine()) != null)
+            // headers (Host, User - Agent, Accept, Content-Type, Content-Length)
+            while ((line = reader.ReadLine()) != null) // continues reading after first line until it reaches an empty line (end of headers)
             {
                 //Console.WriteLine(line);
                 Console.WriteLine($"        {line}");
@@ -69,11 +84,16 @@ namespace MTCGame.Server.HTTP
                 headers[headerParts[0]] = headerParts[1];
             }
 
-            // content...
+            // content
             Content = "";
             var data = new StringBuilder();
-            int contentLength = int.Parse(headers["Content-Length"]);
-            if (contentLength > 0)
+
+            int contentLength = 0;
+            if (headers.ContainsKey("Content-Length"))
+            {
+                contentLength = int.Parse(headers["Content-Length"]);
+            }
+            if (contentLength > 0) //if there is content to parse
             {
                 char[] buffer = new char[1024];
                 int totalBytesRead = 0;
@@ -85,8 +105,9 @@ namespace MTCGame.Server.HTTP
                     totalBytesRead += bytesRead;
                     data.Append(buffer, 0, bytesRead);
                 }
+                Content = data.ToString();
+                Console.WriteLine(Content);
             }
-            Content = data.ToString();
         }
     }
 }

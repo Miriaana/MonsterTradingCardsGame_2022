@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using MonsterTradingCardsGame.DAL;
+using MonsterTradingCardsGame.Model;
 using MTCGame.Server.HTTP;
 
 namespace MTCGame.Server.MTCG
@@ -15,6 +17,9 @@ namespace MTCGame.Server.MTCG
             try
             {
                 var user = JsonSerializer.Deserialize<User>(rq.Content);
+                var repo = new PostgreSQLRepository();
+                //repo.CreateUser(user);
+                
                 rs.ResponseCode = 201;
                 rs.ResponseContent = "Successfully created User!";
             }

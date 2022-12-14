@@ -1,8 +1,23 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using MonsterTradingCardsGame.BL;
+//using MonsterTradingCardsGame.Model;
 using MonsterTradingCardsGame.DAL;
-using MonsterTradingCardsGame.Model;
+using System.Data;
+
+try
+{
+    var repo = new PostgreSQLRepository();
+    UserRecord user = new UserRecord((new Random().Next()), "Jimmy", "1234pw", 20);
+    repo.CreateUser(user);
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.ToString());
+}
+/*
+using MonsterTradingCardsGame.BL;
+
+
 
 Console.WriteLine("Hello, World!");
 Console.WriteLine("This is just a little test!");
@@ -23,4 +38,4 @@ userHandler.RegisterUser(newUser);
 
 //Console.WriteLine($"My name is {user1.Username}.");
 //user1.Username = "Vanessa";
-//Console.WriteLine($"But now I changed it to {user1.Username}.");
+//Console.WriteLine($"But now I changed it to {user1.Username}.");*/
