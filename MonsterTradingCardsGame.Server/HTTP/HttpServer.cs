@@ -13,6 +13,8 @@ namespace MTCGame.Server.HTTP
         private readonly int port; //= 10001
         private readonly IPAddress ipAddress;
 
+        public Dictionary<string, IHttpEndpoint> Endpoints { get; private set; } = new Dictionary<string, IHttpEndpoint>();
+
         private TcpListener httpListener;
 
         public HttpServer(IPAddress adr, int port)
@@ -30,7 +32,7 @@ namespace MTCGame.Server.HTTP
             {
                 Console.WriteLine("[1] Waiting for new client request...");
                 var clientSocket = httpListener.AcceptTcpClient();
-                var httpProcessor = new HttpProcessor(clientSocket);
+                var httpProcessor = new HttpProcessor(this, clientSocket);
                 Console.WriteLine("[2] New Client accepted");
 
                 //what about "keep alive" browser connections -> handle somehow?
@@ -40,6 +42,11 @@ namespace MTCGame.Server.HTTP
                 });
                 Console.WriteLine("[3] Client Task started"); //Console.Out.Flush();
             }
+        }
+
+        public void RegisterEndpoint(string path, IHttpEndpoint endpoint)
+        {
+            Endpoints.Add(path, endpoint);
         }
     }
 }

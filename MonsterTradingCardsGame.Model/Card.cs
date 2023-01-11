@@ -8,7 +8,7 @@ namespace MonsterTradingCardsGame.Model
 {
     public abstract class Card
     {
-        public enum Element { fire, water, earth };   //what accessability?
+        public enum Element { normal, fire, water};   //what accessability?
         public enum CardType { spell, monster };
 
         protected string _name;

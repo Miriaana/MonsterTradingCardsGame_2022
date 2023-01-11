@@ -11,15 +11,18 @@ namespace MTCGame.Server.HTTP
     internal class HttpProcessor
     {
         private TcpClient clientSocket;
+        private HttpServer httpServer;
 
-        public HttpProcessor(TcpClient clientSocket)
+        public HttpProcessor(HttpServer httpServer, TcpClient clientSocket)
         {
+            this.httpServer = httpServer;
             this.clientSocket = clientSocket;
         }
 
         public void run()
         {
             Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: started processing");
+
             var reader = new StreamReader(clientSocket.GetStream());
             var request = new HttpRequest(reader);
 
@@ -30,10 +33,29 @@ namespace MTCGame.Server.HTTP
             {
                 request.Parse();
 
+                IHttpEndpoint endpoint;
+                httpServer.Endpoints.TryGetValue(request.Path[0], out endpoint);
+                if (endpoint != null)
+                {
+                    endpoint.HandleRequest(request, response);
+                }
+                else
+                {
+                    //Thread.Sleep(10000);
+                    response.ResponseCode = 404;
+                    response.ResponseText = "Not Found";
+                    response.ResponseContent = "<html><body>Not found!</body></html>";
+                    response.Headers.Add("Content-Length", response.ResponseContent.Length.ToString());
+                    response.Headers.Add("Content-Type", "text/html"); // application/json
+                }
+                /*
                 if (request.Path[0].Equals("users"))
                 {
-                    UserController userController = new UserController();
-                    userController.createUser(request, response);
+                    Console.WriteLine("Inserting user");
+                    //UserController userController = new UserController();
+                    //userController.createUser(request, response);
+                    //UserController userController = new UserController();
+                    //userController.createUser(request, response);
                     //if(/someusername)
                 }
                 else if (request.Path[0].Equals("sessions"))
@@ -104,7 +126,7 @@ namespace MTCGame.Server.HTTP
                     response.ResponseContent = "<html><body>Hello World!</body></html>";
                     response.Headers.Add("Content-Length", response.ResponseContent.Length.ToString());
                     response.Headers.Add("Content-Type", "text/plain"); //application/json 
-                }
+                }*/
             }
             catch (Exception ex)
             {
@@ -115,7 +137,12 @@ namespace MTCGame.Server.HTTP
                 response.ResponseContent = "<html><body>Hello World!</body></html>";
 
                 //return;
-            }/*
+            }
+
+            response.Process();
+            Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: finished processing"); Console.Out.Flush();
+            /*
+            
             finally 
             {
                 response.Process();
@@ -128,15 +155,14 @@ namespace MTCGame.Server.HTTP
 
             //todo wth dict refernce auf controller mappen
             //todo: add different paths
-            
+
             /*
             Thread.Sleep(5000);
             Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: sleeping"); Console.Out.Flush();
             Thread.Sleep(5000);
             */
-            
-            response.Process();
-            Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: finished processing"); Console.Out.Flush();
+
+
         }
     }
 }
