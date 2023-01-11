@@ -1,4 +1,5 @@
 ﻿//using MonsterTradingCardsGame.Model;
+using MonsterTradingCardsGame.Model;
 using Npgsql;
 using NpgsqlTypes;
 using System.Collections.Generic;
@@ -34,8 +35,44 @@ namespace MonsterTradingCardsGame.DAL
 
     public class PostgreSQLRepository
     {
-        public void CreateUser(UserRecord player)
+        public void CreateUser(User user)
         {
+            IDbConnection connection = new NpgsqlConnection("Host=localhost;Username=swe1user;Password=swe1pw;Database=mtcgdb");
+            connection.Open();
+            Console.WriteLine($"Connection open");
+            {
+                IDbCommand command = connection.CreateCommand();
+                command.CommandText = @"
+insert into users 
+    (UserId, Username, Password, Coins, Elo) 
+values
+    (@USERID, @USERNAME, @PASSWORD, @COINS, @ELO)
+";
+                Console.WriteLine($"Connection open 2");
+                NpgsqlCommand c = command as NpgsqlCommand;
+
+                c.Parameters.Add("UserId", NpgsqlDbType.Integer);
+                c.Parameters.Add("Username", NpgsqlDbType.Varchar, 50);
+
+                c.Parameters.Add("Password", NpgsqlDbType.Varchar, 50);
+                c.Parameters.Add("Coins", NpgsqlDbType.Integer);
+                c.Parameters.Add("Elo", NpgsqlDbType.Integer);
+                Console.WriteLine($"Connection open 3");
+                c.Prepare();
+                Console.WriteLine($"Connection open 4");
+                c.Parameters["UserId"].Value = 1;
+                c.Parameters["Username"].Value = user.Username;
+                c.Parameters["Password"].Value = user.Password;
+                c.Parameters["Coins"].Value = 20;
+                c.Parameters["Elo"].Value = 0;
+                Console.WriteLine($"Connection open 5");
+                command.ExecuteNonQuery();
+                Console.WriteLine($"Connection open 6");
+            }
+        }
+            public void CreateUser(UserRecord player)
+        {
+            //deprecated
             //save User to DB
             Console.WriteLine("Hello User");
             Console.WriteLine($"Created User {player.ToString()}");

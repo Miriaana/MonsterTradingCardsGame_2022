@@ -1,4 +1,6 @@
-﻿using MTCGame.Server.HTTP;
+﻿using MonsterTradingCardsGame.BL;
+using MonsterTradingCardsGame.Model;
+using MTCGame.Server.HTTP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,16 +34,16 @@ namespace MTCGame.Server.MTCG
         {
             try
             {
-                var user = JsonSerializer.Deserialize<User>(rq.Content);
-
-                Console.WriteLine("skdfndko ooo busnis");
+                var user = JsonSerializer.Deserialize<User>(rq.Content);//note: move user to model
                 // call BL
+                new UserHandler().CreateUser(user); //change?
 
                 rs.ResponseCode = 201;
                 rs.ResponseText = "OK";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error: {ex.Message}");
                 rs.ResponseCode = 400;
                 rs.ResponseContent = "Failed to create User! ";
             }

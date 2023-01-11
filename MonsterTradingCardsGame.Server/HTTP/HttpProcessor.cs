@@ -21,7 +21,7 @@ namespace MTCGame.Server.HTTP
 
         public void run()
         {
-            Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: started processing");
+            //Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: started processing");
 
             var reader = new StreamReader(clientSocket.GetStream());
             var request = new HttpRequest(reader);
@@ -48,85 +48,6 @@ namespace MTCGame.Server.HTTP
                     response.Headers.Add("Content-Length", response.ResponseContent.Length.ToString());
                     response.Headers.Add("Content-Type", "text/html"); // application/json
                 }
-                /*
-                if (request.Path[0].Equals("users"))
-                {
-                    Console.WriteLine("Inserting user");
-                    //UserController userController = new UserController();
-                    //userController.createUser(request, response);
-                    //UserController userController = new UserController();
-                    //userController.createUser(request, response);
-                    //if(/someusername)
-                }
-                else if (request.Path[0].Equals("sessions"))
-                {
-                    response.ResponseCode = 200; response.ResponseText = "OK";
-                    response.ResponseContent = "Path /sessions";
-                    Console.WriteLine(response.ResponseContent);
-                }
-                else if (request.Path[0].Equals("packages"))
-                {
-                    response.ResponseCode = 200; response.ResponseText = "OK";
-                    response.ResponseContent = "Path /packages";
-                    Console.WriteLine(response.ResponseContent);
-                }
-                else if (request.Path[0].Equals("transactions"))
-                {
-                    // additional path packages
-                    response.ResponseCode = 200; response.ResponseText = "OK";
-                    response.ResponseContent = "Path /transactions";
-                    Console.WriteLine(response.ResponseContent);
-                    //if(/packages)
-                }
-                else if (request.Path[0].Equals("cards"))
-                {
-                    response.ResponseCode = 200; response.ResponseText = "OK";
-                    response.ResponseContent = "Path /cards";
-                    Console.WriteLine(response.ResponseContent);
-                }
-                else if (request.Path[0].Equals("deck"))
-                {
-                    response.ResponseCode = 200; response.ResponseText = "OK";
-                    response.ResponseContent = "Path /deck";
-                    Console.WriteLine(response.ResponseContent);
-                    //if(? format = plain)
-                }
-                else if (request.Path[0].Equals("stats"))
-                {
-                    response.ResponseCode = 200; response.ResponseText = "OK";
-                    response.ResponseContent = "Path /stats";
-                    Console.WriteLine(response.ResponseContent);
-                    //if(? format = plain)
-                }
-                else if (request.Path[0].Equals("score"))
-                {
-                    response.ResponseCode = 200; response.ResponseText = "OK";
-                    response.ResponseContent = "Path /score";
-                    Console.WriteLine(response.ResponseContent);
-                    //if(? format = plain)
-                }
-                else if (request.Path[0].Equals("battles"))
-                {
-                    response.ResponseCode = 200; response.ResponseText = "OK";
-                    response.ResponseContent = "Path /deck";
-                    Console.WriteLine(response.ResponseContent);
-                    //if(? format = plain)
-                }
-                else if (request.Path[0].Equals("tradings"))
-                {
-                    response.ResponseCode = 200; response.ResponseText = "OK";
-                    response.ResponseContent = "Path /deck";
-                    Console.WriteLine(response.ResponseContent);
-                    //if(? format = plain)
-                }
-                else
-                {
-                    response.ResponseCode = 404;                    //200 //TODO: also enum
-                    response.ResponseText = "Path not found";       //"OK"
-                    response.ResponseContent = "<html><body>Hello World!</body></html>";
-                    response.Headers.Add("Content-Length", response.ResponseContent.Length.ToString());
-                    response.Headers.Add("Content-Type", "text/plain"); //application/json 
-                }*/
             }
             catch (Exception ex)
             {
@@ -140,7 +61,7 @@ namespace MTCGame.Server.HTTP
             }
 
             response.Process();
-            Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: finished processing"); Console.Out.Flush();
+            //Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: finished processing"); Console.Out.Flush();
             /*
             
             finally 
@@ -149,20 +70,12 @@ namespace MTCGame.Server.HTTP
                 Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: finished processing"); Console.Out.Flush();
             }*/
 
-            //Verarbeitung und Aufrufen des BLs
-            //...unterschiedliche Endpunkte
-            //...application spezifische verarbeitung
-
-            //todo wth dict refernce auf controller mappen
-            //todo: add different paths
 
             /*
             Thread.Sleep(5000);
             Console.WriteLine($"    {Thread.CurrentThread.ManagedThreadId}: sleeping"); Console.Out.Flush();
             Thread.Sleep(5000);
             */
-
-
         }
     }
 }
