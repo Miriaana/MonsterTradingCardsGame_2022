@@ -44,20 +44,17 @@ namespace MTCGame.Server.HTTP
                     //Thread.Sleep(10000);
                     response.ResponseCode = 404;
                     response.ResponseText = "Not Found";
-                    response.ResponseContent = "<html><body>Not found!</body></html>";
+                    response.ResponseContent = "<html><body>Path not found!</body></html>";
                     response.Headers.Add("Content-Length", response.ResponseContent.Length.ToString());
                     response.Headers.Add("Content-Type", "text/html"); // application/json
                 }
             }
             catch (Exception ex)
             {
-                //if (known error){} //
                 Console.WriteLine(ex.ToString());
                 response.ResponseCode = 500;
                 response.ResponseText = "Internal Server Error";
                 response.ResponseContent = "<html><body>Hello World!</body></html>";
-
-                //return;
             }
 
             response.Process();

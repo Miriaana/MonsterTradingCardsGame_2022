@@ -22,11 +22,26 @@ namespace MonsterTradingCardsGame.BL
         public void CreateUser(User user)
         {
             var repo = new PostgreSQLRepository();
-            Console.WriteLine("eebydeeby");
-            //prep user class
+
             user.Password = HashPassword(user.Password);
-            //save to repo
+
             repo.CreateUser(user);
+        }
+
+        public User GetUser(User user)
+        {
+            var repo = new PostgreSQLRepository();
+
+            return repo.GetUser(user);
+        }
+
+        //UpdateUserProfile
+        public void UpdateUserProfile(User user)
+        {
+            var repo = new PostgreSQLRepository();
+
+            //yeah, but do you update and what do you not
+            repo.UpdateProfile(user);
         }
 
         string HashPassword(string password)

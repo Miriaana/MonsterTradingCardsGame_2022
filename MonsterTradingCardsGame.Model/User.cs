@@ -4,8 +4,10 @@ namespace MonsterTradingCardsGame.Model
 {
     public class User
     {
+        public int? UserId { get; set; }
         public string Username { get; set; }
-        public string Password { get; set; }
+        public string? Password { get; set; }
+        public string? Token { get; set; }
         //public string Username;// { get; set; } //Username acts as Id
         //public string? Password;// { get; set; } //private string _password;    //only holds hash values!
         //ID??
@@ -14,18 +16,25 @@ namespace MonsterTradingCardsGame.Model
         public List<Card>? Stack;// { get; set; } 
         public int? Elo;// { get; set; }
         //todo: revise to set to private and revise to set nonnullable
+        public string? ProfileName { get; set; }
+        public string? Image { get; set; }
+        public string? Bio { get; set; }
 
         public User(string username, string password)
         {
             Username = username;
             Password = password;
         }
-
-        /*
+        
         public User(string username)
         {
-            this.Username = username;
-        }*/
+            Username = username;
+        }
+
+        public User()
+        {
+        }
+
         public override string ToString() { 
             return Username; 
         }
