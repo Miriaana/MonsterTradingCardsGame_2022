@@ -1,4 +1,5 @@
-﻿using MTCGame.Model;
+﻿using MTCGame.DAL;
+using MTCGame.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,21 @@ namespace MTCGame.BL
     {
         public void CreatePackage(string mtcgAuth, List<Card> package)
         {
-            //check if there are all 5 cards
-            //save in db
+            var repo = new PostgreSQLRepository();
+            string auth = repo.CheckAuthorization(mtcgAuth);
+
+            if (auth != "admin")
+            {
+                throw new Exception("403: Provided user is not \"admin\"");
+            }
+
+            if (package.Count != 5)
+            {
+                throw new Exception("422: Wrong Amount of Cards in Package");
+            }
+
+            repo.CreatePackage(package);
+            Console.WriteLine("Is there sth wrong here?");
         }
     }
 }

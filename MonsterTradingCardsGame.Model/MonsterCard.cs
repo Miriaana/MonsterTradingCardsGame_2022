@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
+/*
 namespace MTCGame.Model
 {
     public class MonsterCard : Card
@@ -17,3 +18,4 @@ namespace MTCGame.Model
         }
     }
 }
+*/

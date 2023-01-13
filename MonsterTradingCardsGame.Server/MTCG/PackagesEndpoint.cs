@@ -42,17 +42,17 @@ namespace MTCGame.Server.MTCG
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception: {ex.Message}");
-                if (ex.Message.StartsWith("0"))
+                if (ex.Message.StartsWith("401"))
                 {
                     rs.ResponseCode = 401;
                     rs.ResponseText = "Access token is missing or invalid";
                 }
-                else if (ex.Message.StartsWith("1"))
+                else if (ex.Message.StartsWith("403"))
                 {
                     rs.ResponseCode = 403;
                     rs.ResponseText = "Provided user is not \"admin\"";
                 }
-                else if (ex.Message.StartsWith("2"))
+                else if (ex.Message.StartsWith("409"))
                 {
                     rs.ResponseCode = 409;
                     rs.ResponseText = "At least one card in the packages already exists";

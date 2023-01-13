@@ -8,19 +8,24 @@ namespace MTCGame.Model
 {
     public abstract class Card
     {
+        public string? Id { get; set; }
         public enum Element { normal, fire, water};   //what accessability?
         public enum CardType { spell, monster };
 
-        protected string _name;
+        public string? Name { get; set; }
+        public int Damage { get; set; }
+
+        //protected string _name;
         protected CardType _type;
         protected Element _element;
-        protected readonly int _damage;
+        //protected readonly int _damage;
 
-        public Card(string name, int damage, Element element)
+        public Card() { }
+        public Card(string cardId, string name, int damage)
         {
-            _name = name;
-            _damage = damage;
-            _element = element;
+            Id = cardId;
+            Name = name;
+            Damage = damage;
             //_type = type;         //what do with this?! how show you have to implement this in child ctor?
         }
     }
