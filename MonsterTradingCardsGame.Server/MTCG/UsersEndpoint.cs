@@ -27,7 +27,7 @@ namespace MTCGame.Server.MTCG
                     UpdateUser(rq, rs); 
                     break;
                 default:
-                    Console.WriteLine("400 req method not found"); //change: return error or set rs
+                    Console.WriteLine("400 req method not found");
                     rs.ResponseCode = 400;
                     rs.ResponseText = "Bad Request: invalid HttpMethod";
                     break;

@@ -17,24 +17,27 @@ namespace MTCGame.Server.MTCG
             switch (rq.Method)
             {
                 case EHttpMethod.POST:
-                    CreateSession(rq, rs);
+                    CreatePackage(rq, rs);
                     break;
                 default:
-                    Console.WriteLine("404 req method not found"); //change: return error or set rs
+                    Console.WriteLine("400 req method not found");
+                    rs.ResponseCode = 400;
+                    rs.ResponseText = "Bad Request: invalid HttpMethod";
                     break;
             }
         }
 
-        private void CreateSession(HttpRequest rq, HttpResponse rs)
+        private void CreatePackage(HttpRequest rq, HttpResponse rs)
         {
             try
             {
-                var user = JsonSerializer.Deserialize<User>(rq.Content);//note: move user to model
-                // call BL
-                new UserHandler().CreateUser(user); //change?
+                var package = JsonSerializer.Deserialize<List<Card>>(rq.Content);//note: move user to model
+                string mtcgAuth = ((rq.headers["Authorization"]).Split(" "))[1];
 
-                rs.ResponseCode = 200;
-                rs.ResponseText = "User login successful";
+                new PackageHandler().CreatePackage(mtcgAuth, package);
+
+                rs.ResponseCode = 201;
+                rs.ResponseText = "Package and cards successfully created";
             }
             catch (Exception ex)
             {
@@ -42,12 +45,22 @@ namespace MTCGame.Server.MTCG
                 if (ex.Message.StartsWith("0"))
                 {
                     rs.ResponseCode = 401;
-                    rs.ResponseContent = "Invalid username/password provided";
+                    rs.ResponseText = "Access token is missing or invalid";
+                }
+                else if (ex.Message.StartsWith("1"))
+                {
+                    rs.ResponseCode = 403;
+                    rs.ResponseText = "Provided user is not \"admin\"";
+                }
+                else if (ex.Message.StartsWith("2"))
+                {
+                    rs.ResponseCode = 409;
+                    rs.ResponseText = "At least one card in the packages already exists";
                 }
                 else
                 {
                     rs.ResponseCode = 500;
-                    rs.ResponseContent = "Internal Server Error";
+                    rs.ResponseText = "Internal Server Error";
                 }
 
             }

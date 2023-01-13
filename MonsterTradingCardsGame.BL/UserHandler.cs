@@ -11,19 +11,11 @@ namespace MTCGame.BL
 {
     public class UserHandler
     {
-        /*
-        public void RegisterUser(User newUser)
-        {
-            var dal = new PostgreSQLRepository();
-            //DBConnection db = new DBConnection();
-            //dal.CreateUser(newUser);
-        }*/
-
         public void CreateUser(User user)
         {
             var repo = new PostgreSQLRepository();
 
-            user.Password = HashPassword(user.Password);
+            user.Password = Password.HashPassword(user.Password);
 
             repo.CreateUser(user);
         }
@@ -42,12 +34,6 @@ namespace MTCGame.BL
 
             //yeah, but do you update and what do you not
             repo.UpdateProfile(mtcgAuth, user);
-        }
-
-        string HashPassword(string password)
-        {
-            string hash = password.GetHashCode().ToString();
-            return hash;
         }
 
         //unregister()

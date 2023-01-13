@@ -21,7 +21,7 @@ namespace MTCGame.Server.MTCG
                     CreateSession(rq, rs);
                     break;
                 default:
-                    Console.WriteLine("404 req method not found"); //change: return error or set rs
+                    Console.WriteLine("404 req method not found");
                     rs.ResponseCode = 400;
                     rs.ResponseText = "Bad Request: invalid HttpMethod";
                     break;
@@ -32,9 +32,9 @@ namespace MTCGame.Server.MTCG
         {
             try
             {
-                var user = JsonSerializer.Deserialize<User>(rq.Content);//note: move user to model
-                // call BL
-                string token = (new SessionHandler()).CreateSession(user); //change?
+                var user = JsonSerializer.Deserialize<User>(rq.Content);
+
+                string token = (new SessionHandler()).CreateSession(user);
 
                 rs.ResponseCode = 200;
                 rs.ResponseText = "User login successful";
@@ -44,7 +44,7 @@ namespace MTCGame.Server.MTCG
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception: {ex.Message}");
-                if (ex.Message.StartsWith("0"))
+                if (ex.Message.StartsWith("401"))
                 {
                     rs.ResponseCode = 401;
                     rs.ResponseText = "Invalid username/password provided";

@@ -4,6 +4,7 @@ using Npgsql;
 using NpgsqlTypes;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
 
@@ -11,11 +12,17 @@ namespace MTCGame.DAL
 {
     public class PostgreSQLRepository
     {
-        public void CreateUser(User user)
-        {
-            IDbConnection connection = new NpgsqlConnection("Host=localhost;Username=swe1user;Password=swe1pw;Database=mtcgdb");
+        IDbConnection connection;
+        public PostgreSQLRepository() {
+            connection = new NpgsqlConnection("Host=localhost;Username=swe1user;Password=swe1pw;Database=mtcgdb");
             connection.Open();
             Console.WriteLine($"Connection open");
+        }
+        public void CreateUser(User user)
+        {
+            /*IDbConnection connection = new NpgsqlConnection("Host=localhost;Username=swe1user;Password=swe1pw;Database=mtcgdb");
+            connection.Open();
+            Console.WriteLine($"Connection open");*/
             {
                 IDbCommand command = connection.CreateCommand();
                 command.CommandText = @"
@@ -61,9 +68,101 @@ values
         public string CreateSession(User user)
         {
             Console.WriteLine("TODO: create session");
-            return "token";
+            /*IDbConnection connection = new NpgsqlConnection("Host=localhost;Username=swe1user;Password=swe1pw;Database=mtcgdb");
+            connection.Open();
+            Console.WriteLine($"Connection open");*/
+            {
+                IDbCommand command = connection.CreateCommand();
+                command.CommandText = @"
+insert into sessions 
+    (username, token, created_date) 
+values
+    (@USERNAME, @TOKEN, @CREATED_DATE)
+";
+
+                NpgsqlCommand c = command as NpgsqlCommand;
+
+                //c.Parameters.Add("UserId", NpgsqlDbType.Integer);
+                c.Parameters.Add("username", NpgsqlDbType.Varchar, 50);
+
+                c.Parameters.Add("token", NpgsqlDbType.Varchar, 100);
+                c.Parameters.Add("created_date", NpgsqlDbType.Timestamp);
+
+                c.Prepare();
+
+                //c.Parameters["UserId"].Value = 1;
+                c.Parameters["username"].Value = user.Username;
+                c.Parameters["token"].Value = user.Username + "-mtcgToken";
+                c.Parameters["created_date"].Value = DateTime.Now;
+
+                command.ExecuteNonQuery();
+
+                return user.Username + "-mtcgToken";
+            }
         }
 
+        public bool VerifyPassword(User user)
+        {
+            Console.WriteLine("Verifying password");/*
+            IDbConnection connection = new NpgsqlConnection("Host=localhost;Username=swe1user;Password=swe1pw;Database=mtcgdb");
+            connection.Open();
+            Console.WriteLine($"Connection open");*/
+            {
+                IDbCommand command = connection.CreateCommand();
+                command.CommandText = @"
+select password
+from users
+where username=@USERNAME
+";
+                /*command.CommandText = @"
+select 
+case 
+    when password=@PASSWORD
+    then cast(1 as BIT)
+    else cast(0 as bit)
+end as SamePassword
+from users
+where username=@USERNAME
+";*/
+
+                NpgsqlCommand c = command as NpgsqlCommand;
+
+                //c.Parameters.Add("UserId", NpgsqlDbType.Integer);
+                c.Parameters.Add("username", NpgsqlDbType.Varchar, 50);
+                //c.Parameters.Add("password", NpgsqlDbType.Varchar, 100);
+
+                c.Prepare();
+
+                //c.Parameters["UserId"].Value = 1;
+                c.Parameters["username"].Value = user.Username;
+                //c.Parameters["password"].Value = user.Password;
+
+                Console.WriteLine("executing command");
+                
+                var pw = command.ExecuteScalar();
+
+                Console.WriteLine($"{user.Password}");
+                Console.WriteLine($"{pw.ToString()}");
+                Console.WriteLine($"{pw}");
+
+                if (pw.ToString() == user.Password)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                /*
+                IDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Console.WriteLine($"{reader[0]}");
+                }
+                Console.WriteLine("end");*/
+                //return false;
+            }
+        }
     }
 }
 
