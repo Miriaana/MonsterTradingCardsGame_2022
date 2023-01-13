@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace MonsterTradingCardsGame.Model
+namespace MTCGame.Model
 {
     public class MonsterCard : Card
     {

@@ -1,11 +1,9 @@
-﻿using MTCGame.Model;
-
-namespace MonsterTradingCardsGame.Model
+﻿namespace MTCGame.Model
 {
     public class User
     {
         public int? UserId { get; set; }
-        public string Username { get; set; }
+        public string? Username { get; set; }
         public string? Password { get; set; }
         public string? Token { get; set; }
         //public string Username;// { get; set; } //Username acts as Id

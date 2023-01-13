@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MonsterTradingCardsGame.Model
+namespace MTCGame.Model
 {
     public abstract class Card
     {

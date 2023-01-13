@@ -1,5 +1,5 @@
-﻿using MonsterTradingCardsGame.BL;
-using MonsterTradingCardsGame.Model;
+﻿using MTCGame.BL;
+using MTCGame.Model;
 using MTCGame.Server.HTTP;
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,9 @@ namespace MTCGame.Server.MTCG
                     UpdateUser(rq, rs); 
                     break;
                 default:
-                    Console.WriteLine("404 req method not found"); //change: return error or set rs
+                    Console.WriteLine("400 req method not found"); //change: return error or set rs
+                    rs.ResponseCode = 400;
+                    rs.ResponseText = "Bad Request: invalid HttpMethod";
                     break;
             }
         }
@@ -36,11 +38,9 @@ namespace MTCGame.Server.MTCG
         {
             try
             {
-                Console.WriteLine($"1 {rq.Content}");
-                var user = JsonSerializer.Deserialize<User>(rq.Content);//note: move user to model
-                Console.WriteLine($"2");
-                // call BL
-                new UserHandler().CreateUser(user); //change?
+                var user = JsonSerializer.Deserialize<User>(rq.Content);
+
+                new UserHandler().CreateUser(user);
 
                 rs.ResponseCode = 201;
                 rs.ResponseText = "User successfully created";
@@ -51,12 +51,12 @@ namespace MTCGame.Server.MTCG
                 if(ex.Message.StartsWith("23505"))
                 {
                     rs.ResponseCode = 409;
-                    rs.ResponseContent = "User with same username already registered";
+                    rs.ResponseText = "User with same username already registered";
                 }
                 else
                 {
                     rs.ResponseCode = 500;
-                    rs.ResponseContent = "Internal Server Error";
+                    rs.ResponseText = "Internal Server Error";
                 }
                 
             }
@@ -68,12 +68,14 @@ namespace MTCGame.Server.MTCG
             try
             {
                 var user = new User(rq.Path[1]);
-                user.Token = rq.headers["Authorization"];
-                // call BL
-                user = (new UserHandler()).GetUser(user); //change?
+                string mtcgAuth = ((rq.headers["Authorization"]).Split(" "))[1];
+
+                user = (new UserHandler()).GetUser(mtcgAuth, user);
 
                 rs.ResponseCode = 200;
                 rs.ResponseText = "Data successfully retrieved";
+                rs.Headers["Content-Type"] = "application/javascript";
+                rs.ResponseContent = JsonSerializer.Serialize(user);
             }
             catch (Exception ex)
             {
@@ -81,28 +83,30 @@ namespace MTCGame.Server.MTCG
                 if (ex.Message.StartsWith("0"))
                 {
                     rs.ResponseCode = 401;
-                    rs.ResponseContent = "Access token is missing or invalid";
+                    rs.ResponseText = "Access token is missing or invalid";
                 }else if (ex.Message.StartsWith("1"))
                 {
                     rs.ResponseCode = 404;
-                    rs.ResponseContent = "User not found.";
+                    rs.ResponseText = "User not found.";
                 }
                 else
                 {
                     rs.ResponseCode = 500;
-                    rs.ResponseContent = "Internal Server Error";
+                    rs.ResponseText = "Internal Server Error";
                 }
 
             }
         }
 
+        //change profile
         private void UpdateUser(HttpRequest rq, HttpResponse rs)
         {
             try
             {
-                var user = new User(rq.Path[1], "");
-                user.Token = rq.headers["Authorization"];
-                new UserHandler().UpdateUserProfile(user); //change?
+                var user = JsonSerializer.Deserialize<User>(rq.Content);
+                //var user = new User(rq.Path[1]);
+                string mtcgAuth = ((rq.headers["Authorization"]).Split(" "))[1];
+                new UserHandler().UpdateUserProfile(mtcgAuth, user); //change?
 
                 rs.ResponseCode = 201;
                 rs.ResponseText = "User successfully created";
@@ -110,7 +114,7 @@ namespace MTCGame.Server.MTCG
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception: {ex.Message}");
-                if (ex.Message.StartsWith("23505"))
+                if (ex.Message.StartsWith("0"))
                 {
                     rs.ResponseCode = 409;
                     rs.ResponseContent = "User with same username already registered";

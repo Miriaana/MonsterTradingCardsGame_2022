@@ -1,6 +1,6 @@
 using Moq;
 
-namespace MonsterTradingCardsGame.BL.Test
+namespace MTCGame.BL.Test
 {
     public class Tests
     {

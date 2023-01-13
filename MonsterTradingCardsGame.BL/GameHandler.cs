@@ -1,6 +1,6 @@
-﻿using MonsterTradingCardsGame.Model;
+﻿using MTCGame.Model;
 
-namespace MonsterTradingCardsGame.BL
+namespace MTCGame.BL 
 {
     public class GameHandler
     {

@@ -1,5 +1,5 @@
 ﻿//using MonsterTradingCardsGame.Model;
-using MonsterTradingCardsGame.Model;
+using MTCGame.Model;
 using Npgsql;
 using NpgsqlTypes;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Data;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
 
-namespace MonsterTradingCardsGame.DAL
+namespace MTCGame.DAL
 {
     public class PostgreSQLRepository
     {
@@ -24,7 +24,7 @@ insert into users
 values
     (@USERNAME, @PASSWORD, @COINS, @ELO)
 ";
-                Console.WriteLine($"Connection open 2");
+                
                 NpgsqlCommand c = command as NpgsqlCommand;
 
                 //c.Parameters.Add("UserId", NpgsqlDbType.Integer);
@@ -33,32 +33,36 @@ values
                 c.Parameters.Add("Password", NpgsqlDbType.Varchar, 50);
                 c.Parameters.Add("Coins", NpgsqlDbType.Integer);
                 c.Parameters.Add("Elo", NpgsqlDbType.Integer);
-                Console.WriteLine($"Connection open 3");
+
                 c.Prepare();
-                Console.WriteLine($"Connection open 4");
+
                 //c.Parameters["UserId"].Value = 1;
                 c.Parameters["Username"].Value = user.Username;
                 c.Parameters["Password"].Value = user.Password;
                 c.Parameters["Coins"].Value = 20;
                 c.Parameters["Elo"].Value = 0;
-                Console.WriteLine($"Connection open 5");
+
                 command.ExecuteNonQuery();
-                Console.WriteLine($"Connection open 6");
+
             }
         }
 
-        public User GetUser(User user)
+        public User GetUser(string mtcgAuth, User user)
         {
             Console.WriteLine("getting user info");
             return user;
         }
 
-        public void UpdateProfile(User user) 
+        public void UpdateProfile(string mtcgAuth, User user) 
         {
             Console.WriteLine("updating profile");
         }
 
-
+        public string CreateSession(User user)
+        {
+            Console.WriteLine("TODO: create session");
+            return "token";
+        }
 
     }
 }

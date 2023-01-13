@@ -1,5 +1,5 @@
-﻿using MonsterTradingCardsGame.DAL;
-using MonsterTradingCardsGame.Model;
+﻿using MTCGame.DAL;
+using MTCGame.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace MonsterTradingCardsGame.BL
+namespace MTCGame.BL
 {
     public class UserHandler
     {
@@ -28,20 +28,20 @@ namespace MonsterTradingCardsGame.BL
             repo.CreateUser(user);
         }
 
-        public User GetUser(User user)
+        public User GetUser(string mtcgAuth, User user)
         {
             var repo = new PostgreSQLRepository();
 
-            return repo.GetUser(user);
+            return repo.GetUser(mtcgAuth, user);
         }
 
         //UpdateUserProfile
-        public void UpdateUserProfile(User user)
+        public void UpdateUserProfile(string mtcgAuth, User user)
         {
             var repo = new PostgreSQLRepository();
 
             //yeah, but do you update and what do you not
-            repo.UpdateProfile(user);
+            repo.UpdateProfile(mtcgAuth, user);
         }
 
         string HashPassword(string password)

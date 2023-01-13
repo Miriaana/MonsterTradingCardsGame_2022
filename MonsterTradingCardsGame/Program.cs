@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+/*
 //using MonsterTradingCardsGame.Model;
 using MonsterTradingCardsGame.DAL;
 using System.Data;
@@ -14,7 +15,7 @@ catch (Exception ex)
 {
     Console.WriteLine(ex.ToString());
 }
-/*
+
 using MonsterTradingCardsGame.BL;
 
 

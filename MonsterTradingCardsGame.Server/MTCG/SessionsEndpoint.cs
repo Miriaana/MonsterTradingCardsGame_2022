@@ -1,5 +1,6 @@
-﻿using MonsterTradingCardsGame.BL;
-using MonsterTradingCardsGame.Model;
+﻿using MTCGame.BL;
+using MTCGame.Model;
+using MTCGame.BL;
 using MTCGame.Server.HTTP;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace MTCGame.Server.MTCG
                     break;
                 default:
                     Console.WriteLine("404 req method not found"); //change: return error or set rs
+                    rs.ResponseCode = 400;
+                    rs.ResponseText = "Bad Request: invalid HttpMethod";
                     break;
             }
         }
@@ -31,11 +34,12 @@ namespace MTCGame.Server.MTCG
             {
                 var user = JsonSerializer.Deserialize<User>(rq.Content);//note: move user to model
                 // call BL
-                //string token = (new SessionHandler()).CreateSession(user); //change?
+                string token = (new SessionHandler()).CreateSession(user); //change?
 
-                //rs.ResponseContent = token;
                 rs.ResponseCode = 200;
                 rs.ResponseText = "User login successful";
+                rs.Headers["Content-Type"] = "text/plain";
+                rs.ResponseContent = token;
             }
             catch (Exception ex)
             {

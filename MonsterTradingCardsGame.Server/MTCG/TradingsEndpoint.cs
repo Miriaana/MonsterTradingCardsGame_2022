@@ -1,5 +1,5 @@
-﻿using MonsterTradingCardsGame.BL;
-using MonsterTradingCardsGame.Model;
+﻿using MTCGame.BL;
+using MTCGame.Model;
 using MTCGame.Server.HTTP;
 using System;
 using System.Collections.Generic;
