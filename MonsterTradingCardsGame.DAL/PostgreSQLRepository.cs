@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
+using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
 
 namespace MTCGame.DAL
@@ -277,7 +279,7 @@ SELECT SCOPE_IDENTITY()
             c.Parameters.Add("card5id", NpgsqlDbType.Varchar, 255);
             c.Prepare();
             Console.WriteLine("prepared parameters");
-            c.Parameters["price"].Value = 20;
+            c.Parameters["price"].Value = 5;
             c.Parameters["card1id"].Value = package[0].Id;
             c.Parameters["card2id"].Value = package[1].Id;
             c.Parameters["card3id"].Value = package[2].Id;
@@ -289,6 +291,56 @@ SELECT SCOPE_IDENTITY()
             Console.WriteLine("package created!");
             CreateCards(package, packageId);
             Console.WriteLine("cards created!");
+        }
+
+        public void AcquirePackage(string username)
+        {
+            //search for first package in db an return all
+            Console.WriteLine("trying to get package");
+            var package = GetPackage();
+            Console.WriteLine(package);
+
+            /*
+            //get user coins from db and chack against package price
+            var availableCoins = GetUserCoins(username);
+            if(availableCoins == null || availableCoins < package.Price) {
+                throw new Exception("403: Not enough money for buying a card package");
+            }
+            //change all included 5 cards (ownertype, userid, packageid, status)
+            AcquireCards(username, package); //(user, username, "", stack)
+            //remove user coins
+            ChangeUserCoins(username, (availableCoins - package.price));
+            //delete package
+            DeletePackage(package.packageid);*/
+        }
+
+        private Package GetPackage()
+        {
+            //get first available package
+
+            IDbCommand command = connection.CreateCommand();
+            command.CommandText = @"
+select * from packages LIMIT 1";
+
+            NpgsqlCommand c = command as NpgsqlCommand;
+            //c.Prepare();
+
+            IDataReader reader = command.ExecuteReader();
+            reader.Read();
+            int packageId = reader.GetInt32(0);
+            int price = reader.GetInt32(1);
+            List<string> cardIds = new List<string>();
+            cardIds.Add(reader.GetString(2));
+            cardIds.Add(reader.GetString(3));
+            cardIds.Add(reader.GetString(4));
+            cardIds.Add(reader.GetString(5));
+            cardIds.Add(reader.GetString(6));
+
+            var package = new Package(packageId, price, cardIds);
+            reader.Close();
+
+            Console.WriteLine(package);
+            return package;
         }
     }
 }

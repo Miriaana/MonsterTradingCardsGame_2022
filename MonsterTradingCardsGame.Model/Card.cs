@@ -8,7 +8,6 @@ namespace MTCGame.Model
 {
     public class Card
     {
-        public Card() { }
         public string? Id { get; set; }
         //public enum Element { normal, fire, water};   //what accessability?
         //public enum CardType { spell, monster };
@@ -21,7 +20,11 @@ namespace MTCGame.Model
         //protected Element _element;
         //protected readonly int _damage;
 
-        
+        public Card() { }
+        public Card(string cardId)
+        {
+            Id = cardId;
+        }
         public Card(string cardId, string name, int damage)
         {
             Id = cardId;

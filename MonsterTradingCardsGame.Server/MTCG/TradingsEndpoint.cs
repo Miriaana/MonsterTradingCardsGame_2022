@@ -17,37 +17,56 @@ namespace MTCGame.Server.MTCG
             switch (rq.Method)
             {
                 case EHttpMethod.POST:
-                    CreateSession(rq, rs);
+                    Console.WriteLine("method found");
+                    AcquirePackage(rq, rs);
                     break;
                 default:
-                    Console.WriteLine("404 req method not found"); //change: return error or set rs
+                    Console.WriteLine("400 req method not found");
+                    rs.ResponseCode = 400;
+                    rs.ResponseText = "Bad Request: invalid HttpMethod";
                     break;
             }
         }
 
-        private void CreateSession(HttpRequest rq, HttpResponse rs)
+        private void AcquirePackage(HttpRequest rq, HttpResponse rs)
         {
+            Console.WriteLine($"rq: {rq.Path[1]}");
+            if (rq.Path[1] == null || rq.Path[1] != "packages")
+            {
+                rs.ResponseCode = 400;
+                rs.ResponseText = "Bad Request: invalid path";
+            }
             try
             {
-                var user = JsonSerializer.Deserialize<User>(rq.Content);//note: move user to model
-                // call BL
-                new UserHandler().CreateUser(user); //change?
+                Console.WriteLine("trying to aquire package");
+                string mtcgAuth = ((rq.headers["Authorization"]).Split(" "))[1];
+                new TradingHandler().AcquirePackage(mtcgAuth); //change?
 
                 rs.ResponseCode = 200;
-                rs.ResponseText = "User login successful";
+                rs.ResponseText = "A package has been successfully bought";
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception: {ex.Message}");
-                if (ex.Message.StartsWith("0"))
+                if (ex.Message.StartsWith("401"))
                 {
                     rs.ResponseCode = 401;
-                    rs.ResponseContent = "Invalid username/password provided";
+                    rs.ResponseText = "Access token is missing or invalid";
+                }
+                else if (ex.Message.StartsWith("403"))
+                {
+                    rs.ResponseCode = 403;
+                    rs.ResponseText = "Not enough money for buying a card package";
+                }
+                else if (ex.Message.StartsWith("404"))
+                {
+                    rs.ResponseCode = 404;
+                    rs.ResponseText = "No card package available for buying";
                 }
                 else
                 {
                     rs.ResponseCode = 500;
-                    rs.ResponseContent = "Internal Server Error";
+                    rs.ResponseText = "Internal Server Error";
                 }
 
             }
