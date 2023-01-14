@@ -6,21 +6,22 @@ using System.Threading.Tasks;
 
 namespace MTCGame.Model
 {
-    public abstract class Card
+    public class Card
     {
+        public Card() { }
         public string? Id { get; set; }
-        public enum Element { normal, fire, water};   //what accessability?
-        public enum CardType { spell, monster };
+        //public enum Element { normal, fire, water};   //what accessability?
+        //public enum CardType { spell, monster };
 
         public string? Name { get; set; }
-        public int Damage { get; set; }
+        public float? Damage { get; set; }
 
         //protected string _name;
-        protected CardType _type;
-        protected Element _element;
+        //protected CardType _type;
+        //protected Element _element;
         //protected readonly int _damage;
 
-        public Card() { }
+        
         public Card(string cardId, string name, int damage)
         {
             Id = cardId;

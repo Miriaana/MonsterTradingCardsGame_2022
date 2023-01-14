@@ -31,7 +31,8 @@ namespace MTCGame.Server.MTCG
         {
             try
             {
-                var package = JsonSerializer.Deserialize<List<Card>>(rq.Content);//note: move user to model
+                //var package = JsonConvert.DeserializeObject<List<Card>>(rq.Content);
+                var package = JsonSerializer.Deserialize<List<Card>>(rq.Content);
                 string mtcgAuth = ((rq.headers["Authorization"]).Split(" "))[1];
 
                 new PackageHandler().CreatePackage(mtcgAuth, package);
