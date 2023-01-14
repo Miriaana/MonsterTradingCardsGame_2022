@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace MTCGame.Model
 {
+    public enum Element { normal, fire, water };   //what accessability?
+    public enum CardType { spell, monster };
+    public enum CardOwnerType { package, user };
+    public enum CardStatus { package, stack, deck, trading }
     public class Card
     {
         public string? Id { get; set; }
-        //public enum Element { normal, fire, water};   //what accessability?
-        //public enum CardType { spell, monster };
+        
 
         public string? Name { get; set; }
         public float? Damage { get; set; }

@@ -5,6 +5,7 @@ using NpgsqlTypes;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Security.Cryptography.X509Certificates;
@@ -223,21 +224,21 @@ values
             NpgsqlCommand c = command as NpgsqlCommand;
 
             c.Parameters.Add("cardid", NpgsqlDbType.Varchar, 255);
-            c.Parameters.Add("ownertype", NpgsqlDbType.Varchar, 50);
+            c.Parameters.Add("ownertype", NpgsqlDbType.Integer);
             c.Parameters.Add("packageid", NpgsqlDbType.Integer);
             c.Parameters.Add("name", NpgsqlDbType.Varchar, 255);
             c.Parameters.Add("damage", NpgsqlDbType.Integer);
-            c.Parameters.Add("status", NpgsqlDbType.Varchar, 50);
+            c.Parameters.Add("status", NpgsqlDbType.Integer);
             c.Prepare();
 
             foreach (Card card in cards)
             {
                 c.Parameters["cardid"].Value = card.Id;
-                c.Parameters["ownertype"].Value = "Package";
+                c.Parameters["ownertype"].Value = (int)CardOwnerType.package;
                 c.Parameters["packageid"].Value = PackageId;
                 c.Parameters["name"].Value = card.Name;
                 c.Parameters["damage"].Value = card.Damage;
-                c.Parameters["status"].Value = "Package";
+                c.Parameters["status"].Value = (int)CardStatus.package;
 
                 command.ExecuteNonQuery();
             }
@@ -298,20 +299,22 @@ SELECT SCOPE_IDENTITY()
             //search for first package in db an return all
             Console.WriteLine("trying to get package");
             var package = GetPackage();
-            Console.WriteLine(package);
+            // Console.WriteLine(package);
 
-            /*
             //get user coins from db and chack against package price
             var availableCoins = GetUserCoins(username);
             if(availableCoins == null || availableCoins < package.Price) {
                 throw new Exception("403: Not enough money for buying a card package");
             }
+            Console.WriteLine($"{availableCoins} >= {package.Price}");
+
             //change all included 5 cards (ownertype, userid, packageid, status)
             AcquireCards(username, package); //(user, username, "", stack)
             //remove user coins
-            ChangeUserCoins(username, (availableCoins - package.price));
+            UpdateUserCoins(username, (availableCoins - package.Price));
             //delete package
-            DeletePackage(package.packageid);*/
+            DeletePackage((int)package.Id);
+            Console.WriteLine("All done");
         }
 
         private Package GetPackage()
@@ -322,11 +325,14 @@ SELECT SCOPE_IDENTITY()
             command.CommandText = @"
 select * from packages LIMIT 1";
 
-            NpgsqlCommand c = command as NpgsqlCommand;
+            //NpgsqlCommand c = command as NpgsqlCommand;
             //c.Prepare();
 
             IDataReader reader = command.ExecuteReader();
-            reader.Read();
+            if (!reader.Read())
+            {
+                throw new Exception("404: No card package available for buying");
+            }
             int packageId = reader.GetInt32(0);
             int price = reader.GetInt32(1);
             List<string> cardIds = new List<string>();
@@ -341,6 +347,88 @@ select * from packages LIMIT 1";
 
             Console.WriteLine(package);
             return package;
+        }
+
+        private int GetUserCoins(string username)
+        {
+            //get first available package
+
+            IDbCommand command = connection.CreateCommand();
+            command.CommandText = @"
+select coins from users 
+where username=@username";
+
+            NpgsqlCommand c = command as NpgsqlCommand;
+            c.Parameters.Add("username", NpgsqlDbType.Varchar, 255);
+            c.Prepare();
+            c.Parameters["username"].Value = username;
+            //c.Prepare();
+
+            int coins = (int)command.ExecuteScalar();
+            return coins;
+        }
+
+        private void AcquireCards(string username, Package package) {
+            //change all included 5 cards (ownertype, userid, packageid, status)
+            //(user, username, "", stack)
+            IDbCommand command = connection.CreateCommand();
+            command.CommandText = @"
+update cards
+set ownertype=@ownertype, username=@username, status=@status
+where cardid=@cardid";
+
+            NpgsqlCommand c = command as NpgsqlCommand;
+            c.Parameters.Add("ownertype", NpgsqlDbType.Integer);
+            c.Parameters.Add("username", NpgsqlDbType.Varchar, 255);
+            //c.Parameters.Add("packageid", NpgsqlDbType.Integer);
+            c.Parameters.Add("status", NpgsqlDbType.Integer);
+            c.Parameters.Add("cardid", NpgsqlDbType.Varchar, 255);
+            c.Prepare();
+
+            c.Parameters["username"].Value = username;
+            c.Parameters["ownertype"].Value = (int)CardOwnerType.user;
+            //c.Parameters["packageid"].Value = NULL;
+            c.Parameters["status"].Value = (int)CardStatus.stack;
+
+            foreach(var card in package.Cards)
+            {
+                c.Parameters["cardid"].Value = card.Id;
+
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private void UpdateUserCoins(string username, int coins)
+        {
+            IDbCommand command = connection.CreateCommand();
+            command.CommandText = @"
+update users
+set coins=@coins
+where username=@username";
+
+            NpgsqlCommand c = command as NpgsqlCommand;
+            c.Parameters.Add("username", NpgsqlDbType.Varchar, 255);
+            c.Parameters.Add("coins", NpgsqlDbType.Integer);
+            c.Prepare();
+            c.Parameters["username"].Value = username;
+            c.Parameters["coins"].Value = coins;
+
+            command.ExecuteNonQuery();
+        }
+
+        private void DeletePackage(int packageid)
+        {
+            IDbCommand command = connection.CreateCommand();
+            command.CommandText = @"
+delete from packages
+where packageid=@packageid";
+
+            NpgsqlCommand c = command as NpgsqlCommand;
+            c.Parameters.Add("packageid", NpgsqlDbType.Integer);
+            c.Prepare();
+            c.Parameters["packageid"].Value = packageid;
+
+            command.ExecuteNonQuery();
         }
     }
 }
