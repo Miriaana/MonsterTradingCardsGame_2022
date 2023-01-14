@@ -16,38 +16,46 @@ namespace MTCGame.Server.MTCG
         {
             switch (rq.Method)
             {
-                case EHttpMethod.POST:
-                    CreateSession(rq, rs);
+                case EHttpMethod.GET:
+                    GetCards(rq, rs);
                     break;
                 default:
-                    Console.WriteLine("404 req method not found"); //change: return error or set rs
+                    Console.WriteLine("400 req method not found");
+                    rs.ResponseCode = 400;
+                    rs.ResponseText = "Bad Request: invalid HttpMethod";
                     break;
             }
         }
 
-        private void CreateSession(HttpRequest rq, HttpResponse rs)
+        private void GetCards(HttpRequest rq, HttpResponse rs)
         {
             try
             {
-                var user = JsonSerializer.Deserialize<User>(rq.Content);//note: move user to model
-                // call BL
-                new UserHandler().CreateUser(user); //change?
+                string mtcgAuth = rq.GetToken();
+                List<Card> stack = new CardHandler().GetStack(mtcgAuth); //change?
 
                 rs.ResponseCode = 200;
-                rs.ResponseText = "User login successful";
+                rs.ResponseText = " The user has cards, the response contains these";
+                rs.Headers["Content-Type"] = "application/javascript";
+                rs.ResponseContent = JsonSerializer.Serialize(stack);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception: {ex.Message}");
-                if (ex.Message.StartsWith("0"))
+                if (ex.Message.StartsWith("204"))
+                {
+                    rs.ResponseCode = 204;
+                    rs.ResponseText = "The request was fine, but the user doesn't have any cards";
+                }
+                else if (ex.Message.StartsWith("401"))
                 {
                     rs.ResponseCode = 401;
-                    rs.ResponseContent = "Invalid username/password provided";
+                    rs.ResponseText = "Access token is missing or invalid";
                 }
                 else
                 {
                     rs.ResponseCode = 500;
-                    rs.ResponseContent = "Internal Server Error";
+                    rs.ResponseText = "Internal Server Error";
                 }
 
             }

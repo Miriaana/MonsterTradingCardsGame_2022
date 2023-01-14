@@ -105,7 +105,7 @@ namespace MTCGame.Server.MTCG
             {
                 var user = JsonSerializer.Deserialize<User>(rq.Content);
                 //var user = new User(rq.Path[1]);
-                string mtcgAuth = ((rq.headers["Authorization"]).Split(" "))[1];
+                string mtcgAuth = rq.GetToken();
                 new UserHandler().UpdateUserProfile(mtcgAuth, user); //change?
 
                 rs.ResponseCode = 201;

@@ -169,6 +169,10 @@ where username=@USERNAME
 
         public string CheckAuthorization(string mtcgAuth)
         {
+            if(mtcgAuth == null || mtcgAuth == "")
+            {
+                throw new Exception("401: Access token is missing or invalid");
+            }
             IDbCommand command = connection.CreateCommand();
             command.CommandText = @"
 select username
@@ -429,6 +433,39 @@ where packageid=@packageid";
             c.Parameters["packageid"].Value = packageid;
 
             command.ExecuteNonQuery();
+        }
+
+        public List<Card> GetStack(string username)
+        {
+            IDbCommand command = connection.CreateCommand();
+            command.CommandText = @"
+select * from cards
+where username=@username and ownertype=@ownertype";
+
+            NpgsqlCommand c = command as NpgsqlCommand;
+            c.Parameters.Add("username", NpgsqlDbType.Varchar, 255);
+            c.Parameters.Add("ownertype", NpgsqlDbType.Integer);
+            c.Prepare();
+            c.Parameters["username"].Value = username;
+            c.Parameters["ownertype"].Value = (int)CardOwnerType.user;
+
+            List<Card> stack = new List<Card>();
+            IDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                Card card = new Card(
+                    reader.GetString(0),
+                    reader.GetString(4),
+                    reader.GetInt32(5),
+                    reader.GetString(2),
+                    (CardStatus)reader.GetInt32(6)
+                );
+                stack.Add(card);
+                //Console.WriteLine($"{reader[0]}");
+
+            }
+
+            return stack;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace MTCGame.Server.HTTP
 {
@@ -107,6 +108,18 @@ namespace MTCGame.Server.HTTP
                 }
                 Content = data.ToString();
                 Console.WriteLine(Content);
+            }
+        }
+
+        public string GetToken()
+        {
+            if (headers.ContainsKey("Authorization"))
+            {
+                return (headers["Authorization"].Split(" "))[1];
+            }
+            else
+            {
+                return "";
             }
         }
     }

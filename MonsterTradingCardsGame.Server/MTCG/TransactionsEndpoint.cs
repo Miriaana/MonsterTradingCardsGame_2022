@@ -37,7 +37,7 @@ namespace MTCGame.Server.MTCG
             try
             {
                 Console.WriteLine("trying to aquire package");
-                string mtcgAuth = ((rq.headers["Authorization"]).Split(" "))[1];
+                string mtcgAuth = rq.GetToken();
                 new TransactionHandler().AcquirePackage(mtcgAuth); //change?
 
                 rs.ResponseCode = 200;

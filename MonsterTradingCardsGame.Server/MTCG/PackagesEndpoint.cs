@@ -33,7 +33,7 @@ namespace MTCGame.Server.MTCG
             {
                 //var package = JsonConvert.DeserializeObject<List<Card>>(rq.Content);
                 var package = JsonSerializer.Deserialize<List<Card>>(rq.Content);
-                string mtcgAuth = ((rq.headers["Authorization"]).Split(" "))[1];
+                string mtcgAuth = rq.GetToken();
 
                 new PackageHandler().CreatePackage(mtcgAuth, package);
 

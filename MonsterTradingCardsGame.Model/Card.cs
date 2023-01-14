@@ -12,11 +12,11 @@ namespace MTCGame.Model
     public enum CardStatus { package, stack, deck, trading }
     public class Card
     {
+        public string? Username { get; set; }
         public string? Id { get; set; }
-        
-
         public string? Name { get; set; }
         public float? Damage { get; set; }
+        public CardStatus? Status { get; set; }
 
         //protected string _name;
         //protected CardType _type;
@@ -33,6 +33,16 @@ namespace MTCGame.Model
             Id = cardId;
             Name = name;
             Damage = damage;
+            //_type = type;         //what do with this?! how show you have to implement this in child ctor?
+        }
+
+        public Card(string cardId, string name, int damage, string username, CardStatus status)
+        {
+            Id = cardId;
+            Name = name;
+            Damage = damage;
+            Username = username;
+            Status = status;
             //_type = type;         //what do with this?! how show you have to implement this in child ctor?
         }
     }
