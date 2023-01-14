@@ -467,6 +467,127 @@ where username=@username and ownertype=@ownertype";
 
             return stack;
         }
+
+        public List<Card> GetDeck(string username)
+        {
+            IDbCommand command = connection.CreateCommand();
+            command.CommandText = @"
+select * from cards
+where username=@username and ownertype=@ownertype and status=@status";
+
+            NpgsqlCommand c = command as NpgsqlCommand;
+            c.Parameters.Add("username", NpgsqlDbType.Varchar, 255);
+            c.Parameters.Add("ownertype", NpgsqlDbType.Integer);
+            c.Parameters.Add("status", NpgsqlDbType.Integer);
+            c.Prepare();
+            c.Parameters["username"].Value = username;
+            c.Parameters["ownertype"].Value = (int)CardOwnerType.user;
+            c.Parameters["status"].Value = (int)CardStatus.deck;
+
+            List<Card> deck = new List<Card>();
+            IDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                Card card = new Card(
+                    reader.GetString(0),
+                    reader.GetString(4),
+                    reader.GetInt32(5),
+                    reader.GetString(2),
+                    (CardStatus)reader.GetInt32(6)
+                );
+                deck.Add(card);
+                //Console.WriteLine($"{reader[0]}");
+
+            }
+
+            return deck;
+        }
+
+        public void ConfigureDeck(string username, List<string> cardids)
+        {
+            if(!CardsAreInStackOrDeck(username, cardids)) {
+                throw new Exception("403: At least one of the provided cards does not belong to the user or is not available.");
+            }
+
+            //remove old cards from deck
+            IDbCommand command = connection.CreateCommand();
+            command.CommandText = @"
+update cards
+set status=@statusstack
+where username=@username and ownertype=@ownertype and status=@statusdeck";
+
+            NpgsqlCommand c = command as NpgsqlCommand;
+            c.Parameters.Add("username", NpgsqlDbType.Varchar, 255);
+            c.Parameters.Add("ownertype", NpgsqlDbType.Integer);
+            c.Parameters.Add("statusdeck", NpgsqlDbType.Integer);
+            c.Parameters.Add("statusstack", NpgsqlDbType.Integer);
+            c.Prepare();
+            c.Parameters["username"].Value = username;
+            c.Parameters["ownertype"].Value = (int)CardOwnerType.user;
+            c.Parameters["statusdeck"].Value = (int)CardStatus.deck;
+            c.Parameters["statusstack"].Value = (int)CardStatus.stack;
+
+            command.ExecuteNonQuery();
+            Console.WriteLine($"removed");
+
+            //add new cards to deck
+            command = connection.CreateCommand();
+            command.CommandText = @"
+update cards
+set status=@statusdeck
+where username=@username AND ownertype=@ownertype and cardid=@cardid"; //username/type redundant due to !CardsAreInStackOrDeck()
+
+            c = command as NpgsqlCommand;
+            c.Parameters.Add("username", NpgsqlDbType.Varchar, 255);
+            c.Parameters.Add("ownertype", NpgsqlDbType.Integer);
+            c.Parameters.Add("statusdeck", NpgsqlDbType.Integer);
+            c.Parameters.Add("statusstack", NpgsqlDbType.Integer);
+            c.Parameters.Add("cardid", NpgsqlDbType.Varchar, 255);
+            c.Prepare();
+            c.Parameters["username"].Value = username;
+            c.Parameters["ownertype"].Value = (int)CardOwnerType.user;
+            c.Parameters["statusdeck"].Value = (int)CardStatus.deck;
+            c.Parameters["statusstack"].Value = (int)CardStatus.stack;
+
+            foreach (string id in cardids)
+            {
+                c.Parameters["cardid"].Value = id;
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public bool CardsAreInStackOrDeck(string username, List<string> cardids)
+        {
+            IDbCommand command = connection.CreateCommand();
+            command.CommandText = @"
+select cardid from cards
+where cardid=@cardid
+and username=@username and ownertype=@ownertype 
+and (status=@statusdeck or status=@statusstack)";
+
+            NpgsqlCommand c = command as NpgsqlCommand;
+            c.Parameters.Add("username", NpgsqlDbType.Varchar, 255);
+            c.Parameters.Add("ownertype", NpgsqlDbType.Integer);
+            c.Parameters.Add("statusdeck", NpgsqlDbType.Integer);
+            c.Parameters.Add("statusstack", NpgsqlDbType.Integer);
+            c.Parameters.Add("cardid", NpgsqlDbType.Varchar, 255);
+            c.Prepare();
+            c.Parameters["username"].Value = username;
+            c.Parameters["ownertype"].Value = (int)CardOwnerType.user;
+            c.Parameters["statusdeck"].Value = (int)CardStatus.deck;
+            c.Parameters["statusstack"].Value = (int)CardStatus.stack;
+
+            foreach(string id in cardids)
+            {
+                c.Parameters["cardid"].Value = id;
+
+                if(command.ExecuteScalar() == null)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
 
