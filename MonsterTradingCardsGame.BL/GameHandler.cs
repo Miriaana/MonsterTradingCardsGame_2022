@@ -1,9 +1,45 @@
 ﻿using MTCGame.Model;
+using System.Numerics;
 
 namespace MTCGame.BL 
 {
     public class GameHandler
     {
+        Lobby Lobby;
+        BattleLog BattleLog;
+        public GameHandler() { 
+            Lobby= new Lobby();
+            BattleLog= new BattleLog();
+        }
+        public void Battle(User Player1, User Player2)
+        {
+            //set state to waiting and setup
+            Lobby.UserBattleState[Player1.Username] = BattleState.InProgess;
+            Lobby.UserBattleState[Player2.Username] = BattleState.InProgess;
+
+            BattleLog.Player1 = Player1;
+            BattleLog.Player2 = Player2;
+
+            //play game
+            Thread.Sleep(1000);
+            Console.WriteLine("Battle ongoing");
+            Thread.Sleep(5000);
+            Console.WriteLine("Battle finished");
+
+            //demo: player2 lost all his cards
+            foreach(Card card in Player2.Deck)
+            {
+                BattleLog.Player1.Deck.Add(card);
+            }
+            BattleLog.Player2.Deck.Clear();
+
+            //game finished
+            Lobby.Logs.Add(BattleLog);
+
+            Lobby.UserBattleState[Player1.Username] = BattleState.Finished;
+            Lobby.UserBattleState[Player2.Username] = BattleState.Finished;
+            Console.WriteLine("end Battle");
+        }
         /*
         /// <summary>
         /// receives users with their decks, returns the winner; 

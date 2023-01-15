@@ -17,24 +17,27 @@ namespace MTCGame.Server.MTCG
             switch (rq.Method)
             {
                 case EHttpMethod.POST:
-                    CreateSession(rq, rs);
+                    StartBattle(rq, rs);
                     break;
                 default:
-                    Console.WriteLine("404 req method not found"); //change: return error or set rs
+                    Console.WriteLine("400 req method not found");
+                    rs.ResponseCode = 400;
+                    rs.ResponseText = "Bad Request: invalid HttpMethod";
                     break;
             }
         }
 
-        private void CreateSession(HttpRequest rq, HttpResponse rs)
+        private void StartBattle(HttpRequest rq, HttpResponse rs)
         {
             try
             {
-                var user = JsonSerializer.Deserialize<User>(rq.Content);//note: move user to model
-                // call BL
-                new UserHandler().CreateUser(user); //change?
+                string mtcgAuth = rq.GetToken();
+                string battleLog = new BattleHandler().StartBattle(mtcgAuth); //change?
 
                 rs.ResponseCode = 200;
                 rs.ResponseText = "User login successful";
+                rs.Headers["Content-Type"] = "text/plain";
+                rs.ResponseContent = battleLog;
             }
             catch (Exception ex)
             {
@@ -42,12 +45,12 @@ namespace MTCGame.Server.MTCG
                 if (ex.Message.StartsWith("0"))
                 {
                     rs.ResponseCode = 401;
-                    rs.ResponseContent = "Invalid username/password provided";
+                    rs.ResponseText = "Invalid username/password provided";
                 }
                 else
                 {
                     rs.ResponseCode = 500;
-                    rs.ResponseContent = "Internal Server Error";
+                    rs.ResponseText = "Internal Server Error";
                 }
 
             }
