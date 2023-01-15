@@ -36,6 +36,19 @@ namespace MTCGame.BL
             BattleLog battleLog = new Lobby().Join(player);
 
             //remove prev deckcards and add new ones to stack
+            if(battleLog.Player1.Username == player.Username) {
+                player.Deck = battleLog.Player1.Deck;
+            }
+            else if (battleLog.Player2.Username == player.Username)
+            {
+                player.Deck = battleLog.Player2.Deck;
+            }
+            else
+            {
+                throw new Exception("500: battlelog doesn't contain expected player");
+            }
+            repo.RemoveDeck(auth);
+            repo.AcquireCards(auth, player.Deck);
             //send log
             return battleLog.Log;
         }
