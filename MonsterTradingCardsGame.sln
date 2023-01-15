@@ -13,9 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTCGame.DAL", "MonsterTradi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTCGame.BL.Test", "MonsterTradingCardsGame.BL.Test\MTCGame.BL.Test.csproj", "{B722220F-A61D-4404-A635-2A75B9D2C03D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTCGame.Server", "MonsterTradingCardsGame.Server\MTCGame.Server.csproj", "{695C514C-118D-4542-A8F8-58F2E9BA2F38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTCGame.Server", "MonsterTradingCardsGame.Server\MTCGame.Server.csproj", "{695C514C-118D-4542-A8F8-58F2E9BA2F38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTCGame.Client", "MTCGame.Client\MTCGame.Client.csproj", "{93497769-2A4F-431C-AD9A-6FC190106722}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTCGame.Client", "MTCGame.Client\MTCGame.Client.csproj", "{93497769-2A4F-431C-AD9A-6FC190106722}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTCGame.Model.Test", "MTCGame.Model.Test\MTCGame.Model.Test.csproj", "{12DBAE79-F636-4EA3-9312-28F398DBB572}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{93497769-2A4F-431C-AD9A-6FC190106722}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93497769-2A4F-431C-AD9A-6FC190106722}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93497769-2A4F-431C-AD9A-6FC190106722}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12DBAE79-F636-4EA3-9312-28F398DBB572}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12DBAE79-F636-4EA3-9312-28F398DBB572}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12DBAE79-F636-4EA3-9312-28F398DBB572}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12DBAE79-F636-4EA3-9312-28F398DBB572}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

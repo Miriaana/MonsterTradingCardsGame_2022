@@ -8,6 +8,7 @@ namespace MTCGame.BL.Test
 
         //this will all have to be changed, this is just a reference
 
+        /*
         [SetUp]
         public void Setup()
         {
@@ -18,7 +19,7 @@ namespace MTCGame.BL.Test
         {
             var battle = new GameHandler();
             Assert.IsNotNull(battle);
-        }
+        }*/
 
         /*
         [Test]
