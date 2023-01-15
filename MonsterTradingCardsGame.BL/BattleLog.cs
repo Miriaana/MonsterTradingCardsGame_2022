@@ -9,18 +9,26 @@ namespace MTCGame.BL
 {
     public class BattleLog
     {
-        public User Player1;
+        public User Player;
 
-        public User Player2;
+        public User Enemy;
 
-        public string Log;
+        public string LogString;
 
-        public BattleLog() { }
+        public BattleLog() { 
+            LogString = string.Empty;
+            Enemy = new User();
+            Player= new User();
+        }
         public BattleLog(User Player1, User Player2)
         {
-            this.Player1 = Player1;
-            this.Player2 = Player2;
-            Log = "";
+            this.Player = Player1;
+            this.Enemy = Player2;
+            LogString = "";
+        }
+        public void LogLine(string line)
+        {
+            LogString += line + "\n";
         }
     }
 }

@@ -30,27 +30,32 @@ namespace MTCGame.BL
             
             //prepare user and cards (fill in element, type, etc)
             User player = new User(auth);
-            player.Deck = deck; //todo: fill in element/type
+            player.Deck = deck; 
+            //todo: fill in element/type
+            foreach(Card card in player.Deck) 
+            {
+                card.FillTypes();
+            }
 
             //join lobby and wait until battle is finished
             BattleLog battleLog = new Lobby().Join(player);
 
             //remove prev deckcards and add new ones to stack
-            if(battleLog.Player1.Username == player.Username) {
-                player.Deck = battleLog.Player1.Deck;
-            }
+            if(battleLog.Player.Username == player.Username) {
+                player.Deck = battleLog.Player.Deck;
+            }/*
             else if (battleLog.Player2.Username == player.Username)
             {
                 player.Deck = battleLog.Player2.Deck;
-            }
+            }*/
             else
             {
-                throw new Exception("500: battlelog doesn't contain expected player");
+                throw new Exception("500: battlelog doesn't contain expected player in property Player");
             }
             repo.RemoveDeck(auth);
             repo.AcquireCards(auth, player.Deck);
             //send log
-            return battleLog.Log;
+            return battleLog.LogString;
         }
     }
 }
