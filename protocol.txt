@@ -23,7 +23,7 @@ Lessons Learned:
 	break up big projects into small goals and even smaller bullet points on a todo list to work at over time, they become far easier to manage and far less daunting
 _____________________________________________________________________
 Unit Tests:
-	The chosen Unit Tests test the implementation of the Class Card, specifically Card.Attack(), to facilitate the further implementation of the battle logic
+	The chosen Unit Tests test the implementation of the Class Card in order to facilitate the further implementation of the battle logic
 _____________________________________________________________________
 Unique Feature:
 	At the moment the unique feature unfortunately consists of cards completely ignoring the cardtype/element they are fighting against
