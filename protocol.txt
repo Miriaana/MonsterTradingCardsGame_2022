@@ -1,0 +1,34 @@
+Protocol for MTCGame 						(Stand 15.01.2023, 23:00)
+_____________________________________________________________________
+Design:
+	DB Tables: 'mtcgdb sql statements.txt'
+		ended up not using user.deck and decks at all
+		all cards with respective ownerids and states(stack/deck/etc) are saved to one table
+	VS-Solution:
+		mtcgame.server
+			includes executable
+			.HTTP
+			.MTCG
+				holds all endpoints
+		mtcgame.BL
+			includes the to the endpoints corresponding handlers; handlers format data and connect to DAL
+			includes battlehandling with lobby, game and logs
+		mtcgame.DAL
+			one class to handle db
+		mtcg.model
+			only actually uses User, Package and Card
+		mtcgame and mtcg.client not used
+_____________________________________________________________________
+Lessons Learned:
+	break up big projects into small goals and even smaller bullet points on a todo list to work at over time, they become far easier to manage and far less daunting
+_____________________________________________________________________
+Unit Tests:
+	The chosen Unit Tests test the implementation of the Class Card, specifically Card.Attack(), to facilitate the further implementation of the battle logic
+_____________________________________________________________________
+Unique Feature:
+	At the moment the unique feature unfortunately consists of cards completely ignoring the cardtype/element they are fighting against
+_____________________________________________________________________
+Time Spent: ~ 55 hours, estimated 60% done
+_____________________________________________________________________
+Github: https://github.com/Miriaana/MonsterTradingCardsGame_2022
+_____________________________________________________________________

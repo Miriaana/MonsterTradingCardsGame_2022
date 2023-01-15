@@ -1,0 +1,79 @@
+_____________________________________________________________________
+connect to db:
+	psql -U swe1user
+		\l+ (show databases)
+	\c mtcgdb
+		\dt (show tables)	
+_____________________________________________________________________
+create db:
+
+CREATE DATABASE mtcgdb;
+
+_____________________________________________________________________
+create tables:
+
+CREATE TABLE users (
+    userid SERIAL PRIMARY KEY,
+    username varchar(255) NOT NULL UNIQUE,
+    password varchar(255) NOT NULL,
+	profilename varchar(255),
+	image varchar(255),
+	bio varchar(255),
+	deck int,
+    coins int,
+	elo int
+);
+
+CREATE TABLE decks (
+    DeckId SERIAL PRIMARY KEY,
+	UserId int,
+	Card1Id varchar(255),
+	Card2Id varchar(255),
+	Card3Id varchar(255),
+	Card4Id varchar(255)
+);
+
+CREATE TABLE cards (
+    cardid varchar(255) PRIMARY KEY,
+	ownertype int,
+	username varchar(255),
+	packageid int, 
+	name varchar(255),
+	damage int,
+	status int
+);
+
+CREATE TABLE packages (
+    PackageId SERIAL PRIMARY KEY,
+	Price int,
+	Card1Id varchar(255),
+	Card2Id varchar(255),
+	Card3Id varchar(255),
+	Card4Id varchar(255),
+	Card5Id varchar(255)
+);
+
+CREATE TABLE sessions (
+    sessionid SERIAL PRIMARY KEY,
+	username varchar(255),
+	token varchar(255),
+	created_date timestamp 
+);
+_____________________________________________________________________
+clear tables:
+	DELETE FROM users;
+	DELETE FROM decks;
+	DELETE FROM cards;
+	DELETE FROM packages;
+	DELETE FROM sessions;
+_____________________________________________________________________
+delete tables:
+	DROP TABLE users;
+	DROP TABLE decks;
+	DROP TABLE cards;
+	DROP TABLE packages;
+	DROP TABLE sessions;
+_____________________________________________________________________
+delete db:
+	DROP DATABASE mtcgdb;
+_____________________________________________________________________
