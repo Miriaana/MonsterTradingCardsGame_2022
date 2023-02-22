@@ -42,7 +42,7 @@ values
                     //c.Parameters.Add("UserId", NpgsqlDbType.Integer);
                     c.Parameters.Add("Username", NpgsqlDbType.Varchar, 50);
 
-                    c.Parameters.Add("Password", NpgsqlDbType.Varchar, 50);
+                    c.Parameters.Add("Password", NpgsqlDbType.Varchar, 255);
                     c.Parameters.Add("Coins", NpgsqlDbType.Integer);
                     c.Parameters.Add("Elo", NpgsqlDbType.Integer);
 

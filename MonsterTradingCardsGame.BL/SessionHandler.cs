@@ -13,8 +13,10 @@ namespace MTCGame.BL
         public string CreateSession(User user)
         {
             var repo = new PostgreSQLRepository();
+            Console.WriteLine($"given pw: {user.Password}");
 
             user.Password = Password.HashPassword(user.Password);
+            Console.WriteLine($"given pw: {user.Password}");
 
             if (repo.VerifyPassword(user))
             {
