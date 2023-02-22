@@ -40,8 +40,20 @@ namespace MTCGame.Server.MTCG
 
                 rs.ResponseCode = 200;
                 rs.ResponseText = "The deck has cards, the response contains these";
-                rs.Headers["Content-Type"] = "application/javascript";
-                rs.ResponseContent = JsonSerializer.Serialize(deck);
+
+                if (rq.QueryParams.TryGetValue("format", out string format) && format == "plain")
+                {
+                    Console.WriteLine($"returning plain");
+                    rs.Headers["Content-Type"] = "text/plain";
+                    rs.ResponseContent = CardsToText(deck);
+                } 
+                else
+                {
+                    Console.WriteLine($"returning json");
+                    rs.Headers["Content-Type"] = "application/javascript";
+                    rs.ResponseContent = JsonSerializer.Serialize(deck);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -63,6 +75,16 @@ namespace MTCGame.Server.MTCG
                 }
 
             }
+        }
+
+        private string CardsToText(List<Card> cards)
+        {
+            string text = "";
+            foreach(Card card in cards)
+            {
+                text += $"{card.Id} {card.Name} {card.Damage}\n";
+            }
+            return text;
         }
 
         private void ConfigureDeck(HttpRequest rq, HttpResponse rs)
