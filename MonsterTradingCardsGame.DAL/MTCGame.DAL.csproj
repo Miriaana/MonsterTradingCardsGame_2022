@@ -1,16 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+	<ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Npgsql" Version="7.0.0" />
-    <PackageReference Include="NUnit" Version="3.13.3" />
-  </ItemGroup>
-
+	
   <ItemGroup>
     <ProjectReference Include="..\MonsterTradingCardsGame.Model\MTCGame.Model.csproj" />
   </ItemGroup>
