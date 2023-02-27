@@ -1,9 +1,9 @@
-using Moq;
+/*using Moq;
 
 namespace MTCGame.BL.Test
 {
     public class Tests
-    {
+    {*/
         //live unit testing?
 
         //this will all have to be changed, this is just a reference
@@ -29,10 +29,10 @@ namespace MTCGame.BL.Test
             battle.PlayerOne = new Mock<IPlayer>().Object;
 
             Assert.IsNotNull(battle.PlayerOne);
-        }*/
+        }
 
     }
-}
+}*/
 
 /*
 public interface IPlayer
