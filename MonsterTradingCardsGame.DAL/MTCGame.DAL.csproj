@@ -6,6 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="7.0.2" />
+  </ItemGroup>
 	
   <ItemGroup>
     <ProjectReference Include="..\MonsterTradingCardsGame.Model\MTCGame.Model.csproj" />

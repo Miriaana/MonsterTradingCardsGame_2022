@@ -1,5 +1,6 @@
 using MTCGame.Model;
-using Moq;
+//using Moq;
+using MTCGame.BL;
 
 namespace MTCGame.Test
 {
@@ -10,13 +11,32 @@ namespace MTCGame.Test
         {
         }
 
-        [Test]
-        public void Test_Attack()
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("Hello World")]
+        public void BattleLog_LogLine_DoesNotThrowEvenIfStringEmptyOrNull(string line)
         {
-            //Arrange
+            //arrange
+            var logs = new BattleLog();
+
+            //Act + Assert
+            Assert.DoesNotThrow(() => logs.LogLine(line));
+        }
+
+        [TestCase(null, null, "")]
+        [TestCase("", "", "\n\n")]
+        [TestCase("Hello World!", "Welcome", "Hello World!\nWelcome\n")]
+        public void BattleLog_LogLine_LogsToLogStringAsExpected(string line1, string line2, string expectedLog)
+        {
+            //arrange
+            var logs = new BattleLog();
+
             //Act
+            logs.LogLine(line1);
+            logs.LogLine(line2);
+
             //Assert
-            Assert.Pass();
+            Assert.That(expectedLog, Is.EqualTo(logs.LogString));
         }
         /*
         [Test]
@@ -94,17 +114,17 @@ namespace MTCGame.Test
             Assert.IsNotNull(battle);
         }*/
 
-        /*
-        [Test]
-        public void Battle_HasOnePlayer()
-        {
-            var battle = new Battle();
-            battle.PlayerOne = new Mock<IPlayer>().Object;
+    /*
+    [Test]
+    public void Battle_HasOnePlayer()
+    {
+        var battle = new Battle();
+        battle.PlayerOne = new Mock<IPlayer>().Object;
 
-            Assert.IsNotNull(battle.PlayerOne);
-        }
-
+        Assert.IsNotNull(battle.PlayerOne);
     }
+
+}
 }
 
 /*
@@ -113,8 +133,8 @@ public interface IPlayer
 
 public class Battle
 {
-    public IPlayer PlayerOne { get; set; }
+public IPlayer PlayerOne { get; set; }
 
-    public Battle() { }
+public Battle() { }
 }*/
 }

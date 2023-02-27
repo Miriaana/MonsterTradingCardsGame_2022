@@ -28,7 +28,8 @@ namespace MTCGame.BL
         }
         public void LogLine(string line)
         {
-            LogString += line + "\n";
+            if (line != null /*&& line != string.Empty*/)
+                LogString += line + "\n";
         }
     }
 }
