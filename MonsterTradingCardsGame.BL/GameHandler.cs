@@ -26,7 +26,7 @@ namespace MTCGame.BL
             //-----------------------------------------
             //play game
             Console.WriteLine("Run Game");
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
 
             int battleRound = 0;
             while (Player1.Deck.Count != 0 
@@ -74,7 +74,7 @@ namespace MTCGame.BL
                 }
             }
             Console.WriteLine("Battle Finished");
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
 
             //evaluate winner
             if(Player1.Deck.Count == 0) //Player 1 lost

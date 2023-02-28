@@ -31,13 +31,20 @@ namespace MTCGame.Server.HTTP
                                                                              // headers... (skipped)
                 writer.WriteLine();
                 writer.WriteLine(ResponseContent);
+
                 writer.Flush();
                 writer.Close();
                 Console.WriteLine("Writer managed to send response");
             }
-            catch (System.ObjectDisposedException)
+            catch (ObjectDisposedException ex)
             {
+                Console.WriteLine(ex.Message);
                 Console.WriteLine("Writer closed before sending response");
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("RemoteHost forced connection closed (or sth like that)");
             }
         }
 
