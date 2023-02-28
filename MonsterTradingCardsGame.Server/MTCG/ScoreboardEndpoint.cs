@@ -17,14 +17,16 @@ namespace MTCGame.Server.MTCG
             switch (rq.Method)
             {
                 case EHttpMethod.POST:
-                    CreateSession(rq, rs);
+                    //CreateSession(rq, rs);
+                    Console.WriteLine("Not implemented yet");
                     break;
                 default:
+                    Console.WriteLine("Not implemented yet");
                     Console.WriteLine("404 req method not found"); //change: return error or set rs
                     break;
             }
         }
-
+        /*
         private void CreateSession(HttpRequest rq, HttpResponse rs)
         {
             try
@@ -51,6 +53,6 @@ namespace MTCGame.Server.MTCG
                 }
 
             }
-        }
+        }*/
     }
 }

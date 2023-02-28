@@ -42,7 +42,7 @@ namespace MTCGame.Server.HTTP
             if(firstLineParts.Length != 3)
             {
                 Console.WriteLine("Not able to correctly parse first line");
-                throw new Exception("request didn't follow the http protocol");
+                throw new Exception("400: Invalid Http Request");
             }
             Method = (EHttpMethod)Enum.Parse(typeof(EHttpMethod), firstLineParts[0]); //error handling
             ProtocolVersion = firstLineParts[2];
@@ -71,7 +71,7 @@ namespace MTCGame.Server.HTTP
                 }
             }
 
-            Console.WriteLine($"Path: /{string.Join("/", Path.ToArray())} \tParams: {string.Join(",", QueryParams)}");
+            //Console.WriteLine($"Path: /{string.Join("/", Path.ToArray())} \tParams: {string.Join(",", QueryParams)}");
 
             // headers (Host, User - Agent, Accept, Content-Type, Content-Length)
             while ((line = reader.ReadLine()) != null) // continues reading after first line until it reaches an empty line (end of headers)
@@ -102,7 +102,10 @@ namespace MTCGame.Server.HTTP
                 {
                     var bytesRead = reader.Read(buffer, 0, 1024);
                     if (bytesRead == 0)
+                    {
+                        Console.WriteLine("Expected Content not received");
                         break;
+                    }
                     totalBytesRead += bytesRead;
                     data.Append(buffer, 0, bytesRead);
                 }

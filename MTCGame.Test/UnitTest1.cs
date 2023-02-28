@@ -2,6 +2,11 @@ using MTCGame.Model;
 //using Moq;
 using MTCGame.BL;
 using static System.Net.Mime.MediaTypeNames;
+using System.Xml;
+using MTCGame.Server.HTTP;
+using Newtonsoft.Json.Linq;
+using System.Text;
+using System;
 
 namespace MTCGame.Test
 {
@@ -51,6 +56,7 @@ namespace MTCGame.Test
         [TestCase("FireElf", 25.0f)]
         [TestCase("Ork", 25.0f)]
         [TestCase("FireTroll", 25.0f)]
+        [TestCase("FireTroll", 0.0f)]
         public void Card_FillTypes_DoesntThrowException(string name, float damage)
         {
             //Arrange
@@ -80,6 +86,48 @@ namespace MTCGame.Test
 
             Assert.Throws<Exception>(() => card.FillTypes());
         }
+        
+        [TestCase("WaterSpell", MajorCardType.Spell)]
+        [TestCase("FireElf", MajorCardType.Monster)]
+        [TestCase("WaterGoblin", MajorCardType.Monster)]
+        [TestCase("Kraken", MajorCardType.Monster)]
+        public void Card_FillTypes_FillMajorTypeAsExpected(string name, MajorCardType expectedType)
+        {
+            Card card = new Card();
+            card.Name = name;
+
+            card.FillTypes();
+
+            Assert.That(card.MajorType, Is.EqualTo(expectedType));
+        }
+
+        [TestCase("WaterSpell", CardElement.water)]
+        [TestCase("FireElf", CardElement.fire)]
+        [TestCase("WaterGoblin", CardElement.water)]
+        [TestCase("Kraken", CardElement.regular)]
+        public void Card_FillTypes_FillElementAsExpected(string name, CardElement expectedElement)
+        {
+            Card card = new Card();
+            card.Name = name;
+
+            card.FillTypes();
+
+            Assert.That(card.Element, Is.EqualTo(expectedElement));
+        }
+
+        [TestCase("WaterSpell", MinorCardType.Spell)]
+        [TestCase("FireElf", MinorCardType.Elf)]
+        [TestCase("WaterGoblin", MinorCardType.Goblin)]
+        [TestCase("Knight", MinorCardType.Knight)]
+        public void Card_FillTypes_FillMinorTypeAsExpected(string name, MinorCardType expectedType)
+        {
+            Card card = new Card();
+            card.Name = name;
+
+            card.FillTypes();
+
+            Assert.That(card.MinorType, Is.EqualTo(expectedType));
+        }
 
         //{ Spell, Goblin, Dragon, Wizzard, Ork, Knight, Kraken, Elf, Troll }
         //Monster Fights
@@ -105,7 +153,6 @@ namespace MTCGame.Test
         [TestCase("Knight", 25.0f, 0.0f, "WaterSpell")]
         [TestCase("Spell", 3.0f, 0.0f, "Kraken")]
         [TestCase("Dragon", 10.0f, 0.0f, "FireElf")]
-        
         public void Card_Attack_DamageEqualsExpectedDamage(string name1, float damage1, float expectedDamage, string name2)
         {
             //Arrange
@@ -125,6 +172,70 @@ namespace MTCGame.Test
             //Assert
             Assert.That(expectedDamage, Is.EqualTo(card1.BattleDamage));
         }
+        
+        [TestCase("PUT /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]")]
+        [TestCase("PUT /sessions HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json")]
+        [TestCase("POST /users HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nContent-Length: 46\n\n{\"Username\":\"admin\",    \"Password\":\"istrator\"}")]
+        public void HttpRequest_Parse_DoesNotThrowException(string lines)
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(lines ?? ""));
+            var reader = new StreamReader(stream); //clientSocket.GetStream()
+            var rq = new HttpRequest(reader);
+
+            Assert.DoesNotThrow(rq.Parse);
+
+
+        }
+
+        [TestCase("hello world", "400: Invalid Http Request")]
+        [TestCase("UPDATE /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]",
+            "400: Invalid Http Request")]
+
+        public void HttpRequest_Parse_DoesThrowException(string lines, string expectedMessage)
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(lines ?? ""));
+            var reader = new StreamReader(stream); //clientSocket.GetStream()
+            var rq = new HttpRequest(reader);
+
+            var ex = Assert.Throws<Exception>(rq.Parse);
+
+            Assert.That(ex.Message, Is.EqualTo(expectedMessage));
+        }
+
+        [TestCase("PUT /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]",
+            EHttpMethod.PUT)]
+        [TestCase("GET /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]",
+            EHttpMethod.GET)]
+        public void HttpRequest_Parse_PropertyMethodHasExpectedValue(string lines, EHttpMethod method)
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(lines ?? ""));
+            var reader = new StreamReader(stream); //clientSocket.GetStream()
+            var rq = new HttpRequest(reader);
+
+            rq.Parse();
+
+            Assert.That(rq.Method, Is.EqualTo(method));        
+        }
+
+        [TestCase("PUT /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]",
+            EHttpMethod.PUT)]
+        public void HttpRequest_Parse_PropertyProtocolVersionHasExpectedValue(string lines, EHttpMethod method)
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(lines ?? ""));
+            var reader = new StreamReader(stream); //clientSocket.GetStream()
+            var rq = new HttpRequest(reader);
+
+            rq.Parse();
+
+            Assert.That(rq.ProtocolVersion, Is.EqualTo(version));
+
+            //Assert.That(rq.Path[0], Is.EqualTo(path0)); //public List<string> Path { get; private set; } //string[]
+            //Assert.That(rq.Method, Is.EqualTo(method)); //public Dictionary<string, string> QueryParams = new();
+            //Assert.That(rq.Method, Is.EqualTo(method)); //public Dictionary<string, string> headers = new();
+            //Assert.That(rq.Method, Is.EqualTo(method)); //public string Content { get; private set; }
+        }
+
+
 
         //TODO: where do you add cards to the db? check for non int/natural values
 
@@ -135,54 +246,6 @@ namespace MTCGame.Test
             Assert.Pass();
         }*/
 
-        /*
-        [TestCase("Knight", 1.0f)]
-        [TestCase("WaterGoblin", 14.0f)]
-        [TestCase("Dragon", 60.0f)]
-        [TestCase("FireSpell", 25.0f)]
-        [TestCase("WaterWizzard", 25.0f)]
-        [TestCase("Kraken", 25.0f)]
-        [TestCase("FireElf", 25.0f)]
-        [TestCase("Ork", 25.0f)]
-        [TestCase("FireTroll", 25.0f)]
-        public void Test_FillTypes_DoesntThrowException(string name, float damage)
-        {
-            //Arrange
-            Card card = new Card();
-            card.Name = name;
-            card.Damage = damage;
-
-            //Act
-
-            //Assert
-            Assert.DoesNotThrow(() => card.FillTypes());
-        }*/
-
-        /*
-        [TestCase("Water", 25.0f)]
-        [TestCase("DendroGoblin", 13.0f)]
-        [TestCase("WaterGoblin", 10.5f)]
-        public void Test_FillTypes_DoesThrowException(string name, float damage)
-        {
-            //Arrange
-            Card card = new Card();
-            card.Name = name;
-            card.Damage = damage;
-
-            //Act / Assert
-
-            Assert.Throws<Exception>(() => card.FillTypes());
-        }*/
-
-        /*
-        [Test]
-        public void Test_Attack()
-        {
-            //Arrange
-            //Act
-            //Assert
-            Assert.Pass();
-        }*/
     }
     /*
     public class Tests
