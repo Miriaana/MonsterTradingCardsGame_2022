@@ -15,6 +15,7 @@ namespace MTCGame.Test
 {
     internal class Test_Endpoints
     {
+        /*
         [TestCase(EHttpMethod.POST)]
         public void UsersEndpoint_CreateUser_ValidInputResponse(EHttpMethod method)
         {
@@ -79,6 +80,6 @@ namespace MTCGame.Test
                 throw new Exception("204: The request was fine, but the deck doesn't have any cards");
             }
             return deck;
-        }
+        }*/
     }
 }

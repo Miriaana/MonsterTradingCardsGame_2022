@@ -7,6 +7,7 @@ using MTCGame.Server.HTTP;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using System;
+using System.Collections.Generic;
 
 namespace MTCGame.Test
 {
@@ -206,7 +207,7 @@ namespace MTCGame.Test
             EHttpMethod.PUT)]
         [TestCase("GET /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]",
             EHttpMethod.GET)]
-        public void HttpRequest_Parse_PropertyMethodHasExpectedValue(string lines, EHttpMethod method)
+        public void HttpRequest_Parse_PropertyMethodHasExpectedValue(string lines, EHttpMethod expectedMethod)
         {
             var stream = new MemoryStream(Encoding.UTF8.GetBytes(lines ?? ""));
             var reader = new StreamReader(stream); //clientSocket.GetStream()
@@ -214,12 +215,12 @@ namespace MTCGame.Test
 
             rq.Parse();
 
-            Assert.That(rq.Method, Is.EqualTo(method));        
+            Assert.That(rq.Method, Is.EqualTo(expectedMethod));        
         }
 
         [TestCase("PUT /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]",
-            EHttpMethod.PUT)]
-        public void HttpRequest_Parse_PropertyProtocolVersionHasExpectedValue(string lines, EHttpMethod method)
+            "HTTP/1.1")]
+        public void HttpRequest_Parse_PropertyProtocolVersionHasExpectedValue(string lines, string expectedVersion)
         {
             var stream = new MemoryStream(Encoding.UTF8.GetBytes(lines ?? ""));
             var reader = new StreamReader(stream); //clientSocket.GetStream()
@@ -227,17 +228,77 @@ namespace MTCGame.Test
 
             rq.Parse();
 
-            Assert.That(rq.ProtocolVersion, Is.EqualTo(version));
+            Assert.That(rq.ProtocolVersion, Is.EqualTo(expectedVersion));
+        }
 
-            //Assert.That(rq.Path[0], Is.EqualTo(path0)); //public List<string> Path { get; private set; } //string[]
+        [TestCase("PUT /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]",
+            "[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]")]
+        public void HttpRequest_Parse_PropertyContentHasExpectedValue(string lines, string expectedContent)
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(lines ?? ""));
+            var reader = new StreamReader(stream); //clientSocket.GetStream()
+            var rq = new HttpRequest(reader);
+
+            rq.Parse();
+
+            Assert.That(rq.Content, Is.EqualTo(expectedContent));
+
+        }
+        
+        [TestCase("PUT /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]"
+            , new []{ "deck" })]
+        public void HttpRequest_Parse_PropertyPathHasExpectedValue(string lines, string[] arrayExpectedPath)
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(lines ?? ""));
+            var reader = new StreamReader(stream); //clientSocket.GetStream()
+            var rq = new HttpRequest(reader);
+
+            List<string> expectedPath = arrayExpectedPath.ToList();
+
+            rq.Parse();
+
+            Assert.AreEqual(rq.Path, expectedPath);
+
+        }
+
+        [TestCase("PUT /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]"
+            , new[] { "Host", "localhost:10001", "User-Agent", "curl/7.83.1", "Accept", "*/*", "Content-Type", "application/json", "Authorization", "Bearer altenhof-mtcgToken", "Content-Length", "160"})]
+        public void HttpRequest_Parse_PropertyHeadersHasExpectedValue(string lines, string[] arrayExpectedHeaders)
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(lines ?? ""));
+            var reader = new StreamReader(stream); //clientSocket.GetStream()
+            var rq = new HttpRequest(reader);
+
+            rq.Parse();
+
+            for(int i = 0; i < arrayExpectedHeaders.Length; i = i + 2)
+            {
+                Assert.That(rq.headers, Does.ContainKey(arrayExpectedHeaders[i]).WithValue(arrayExpectedHeaders[i+1]));
+            }
+
             //Assert.That(rq.Method, Is.EqualTo(method)); //public Dictionary<string, string> QueryParams = new();
-            //Assert.That(rq.Method, Is.EqualTo(method)); //public Dictionary<string, string> headers = new();
-            //Assert.That(rq.Method, Is.EqualTo(method)); //public string Content { get; private set; }
         }
 
 
+        [TestCase("GET /deck?format=plain HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nAuthorization: Bearer altenhof-mtcgToken"
+            , new[] { "format", "plain" })]
+        public void HttpRequest_Parse_PropertyQueryParamsHasExpectedValue(string lines, string[] arrayQueryParams)
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(lines ?? ""));
+            var reader = new StreamReader(stream); //clientSocket.GetStream()
+            var rq = new HttpRequest(reader);
 
-        //TODO: where do you add cards to the db? check for non int/natural values
+            rq.Parse();
+
+            Assert.That(rq.QueryParams.Count, Is.EqualTo(arrayQueryParams.Length/2));
+
+            for (int i = 0; i < arrayQueryParams.Length; i = i + 2)
+            {
+                Assert.That(rq.QueryParams, Does.ContainKey(arrayQueryParams[i]).WithValue(arrayQueryParams[i + 1]));
+            }
+
+            //Assert.That(rq.Method, Is.EqualTo(method)); //public Dictionary<string, string> QueryParams = new();
+        }
 
         /*
         [Test]
