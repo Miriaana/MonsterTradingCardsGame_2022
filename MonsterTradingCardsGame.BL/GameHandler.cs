@@ -1,5 +1,7 @@
 ﻿using MTCGame.Model;
+using System.Collections.Generic;
 using System.Numerics;
+using static MTCGame.BL.BattleLog;
 
 namespace MTCGame.BL 
 {
@@ -28,14 +30,21 @@ namespace MTCGame.BL
             Console.WriteLine("Run Game");
             //Thread.Sleep(1000);
 
+            var random = new Random();
             int battleRound = 0;
             while (Player1.Deck.Count != 0 
                 && Player2.Deck.Count != 0
                 && battleRound < 100) 
             {
                 battleRound++;
-                Card card1 = Player1.Deck.First();
-                Card card2 = Player2.Deck.First();
+
+                int index1 = random.Next(Player1.Deck.Count);
+                int index2 = random.Next(Player2.Deck.Count);
+                Card card1 = Player1.Deck[index1];
+                Card card2 = Player2.Deck[index2];
+                //Card card1 = Player1.Deck.First();
+                //Card card2 = Player2.Deck.First();
+
                 //player 1 attack
                 card1.Attack(card2);
                 //if(card1.BattleText!= null && card1.BattleText != string.Empty)
@@ -54,23 +63,23 @@ namespace MTCGame.BL
                     Log1.LogLine($"WIN:  Your {card1.Name} defeated the enemy's {card2.Name} with {card1.BattleDamage} : {card2.BattleDamage} DamagePoints");
                     Log2.LogLine($"LOSS: The enemy's {card1.Name} defeated your {card2.Name} with {card1.BattleDamage} : {card2.BattleDamage} DamagePoints");
                     Player1.Deck.Add(card2);
-                    Player2.Deck.RemoveAt(0);
+                    Player2.Deck.RemoveAt(index2);
                 }
                 else if(card2.BattleDamage > card1.BattleDamage) //player 2 wins round
                 {
                     Log2.LogLine($"WIN:  Your {card2.Name} defeated the enemy's {card1.Name} with {card2.BattleDamage} : {card1.BattleDamage} DamagePoints");
                     Log1.LogLine($"LOSS: The enemy's {card2.Name} defeated your {card1.Name} with {card2.BattleDamage} : {card1.BattleDamage} DamagePoints");
                     Player2.Deck.Add(card1);
-                    Player1.Deck.RemoveAt(0);
+                    Player1.Deck.RemoveAt(index1);
                 }
                 else //draw
                 {
                     Log1.LogLine($"DRAW: Your {card1.Name} with {card1.BattleDamage} DamagePoints was just as strong the enemy's {card2.Name}");
                     Log2.LogLine($"DRAW: Your {card2.Name} with {card2.BattleDamage} DamagePoints was just as strong the enemy's {card1.Name}");
-                    Player1.Deck.Add(card1);
+                    /*Player1.Deck.Add(card1);
                     Player1.Deck.RemoveAt(0);
                     Player2.Deck.Add(card2);
-                    Player2.Deck.RemoveAt(0);
+                    Player2.Deck.RemoveAt(0);*/
                 }
             }
             Console.WriteLine("Battle Finished");
@@ -80,17 +89,23 @@ namespace MTCGame.BL
             if(Player1.Deck.Count == 0) //Player 1 lost
             {
                 Log1.LogLine($"\n\tYou lost.\n");
+                Log1.Outcome = BattleOutcome.loss;
                 Log2.LogLine($"\n\tYOU WON!\n");
+                Log2.Outcome = BattleOutcome.win;
             } 
             else if (Player2.Deck.Count == 0)
             {
                 Log2.LogLine($"\n\tYou lost.\n");
+                Log2.Outcome = BattleOutcome.loss;
                 Log1.LogLine($"\n\tYOU WON!\n");
+                Log1.Outcome = BattleOutcome.win;
             } 
             else
             {
                 Log1.LogLine($"\n\tDraw!\n");
+                Log1.Outcome = BattleOutcome.draw;
                 Log2.LogLine($"\n\tDraw!\n");
+                Log2.Outcome = BattleOutcome.draw;
             }
             
 

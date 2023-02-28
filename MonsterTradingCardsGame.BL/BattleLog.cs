@@ -9,9 +9,13 @@ namespace MTCGame.BL
 {
     public class BattleLog
     {
+        public enum BattleOutcome { win, loss, draw };
+
         public User Player;
 
         public User Enemy;
+
+        public BattleOutcome Outcome;
 
         public string LogString;
 

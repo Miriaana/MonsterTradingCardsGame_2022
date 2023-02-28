@@ -53,6 +53,7 @@ namespace MTCGame.BL
                 throw new Exception("500: battlelog doesn't contain expected player in property Player");
             }
             repo.RemoveDeck(auth);
+            (new StatHandler()).UpdateStats(player.Username, battleLog.Outcome);
             repo.AcquireCards(auth, player.Deck);
             //send log
             return battleLog.LogString;

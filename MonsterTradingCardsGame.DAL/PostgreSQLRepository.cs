@@ -2,6 +2,7 @@
 using MTCGame.Model;
 using Npgsql;
 using NpgsqlTypes;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 //using System.Diagnostics.CodeAnalysis;
@@ -53,7 +54,7 @@ values
                     c.Parameters["Username"].Value = user.Username;
                     c.Parameters["Password"].Value = user.Password;
                     c.Parameters["Coins"].Value = 20;
-                    c.Parameters["Elo"].Value = 0;
+                    c.Parameters["Elo"].Value = 100;
                     c.Parameters["Wins"].Value = 0;
                     c.Parameters["Losses"].Value = 0;
 
@@ -759,6 +760,34 @@ where username=@username";
                 reader.Close();
 
                 return stats;
+            }
+        }
+
+        public void UpdateStats(string username, Stats stats)
+        {
+            using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                IDbCommand command = connection.CreateCommand();
+                command.CommandText = @"
+UPDATE users
+SET elo = @elo, 
+    wins = @wins, 
+    losses = @losses
+WHERE username = @Username;";
+
+                NpgsqlCommand c = command as NpgsqlCommand;
+                c.Parameters.Add("username", NpgsqlDbType.Varchar, 255);
+                c.Parameters.Add("elo", NpgsqlDbType.Integer);
+                c.Parameters.Add("wins", NpgsqlDbType.Integer);
+                c.Parameters.Add("losses", NpgsqlDbType.Integer);
+                c.Prepare();
+                c.Parameters["username"].Value = username;
+                c.Parameters["elo"].Value = stats.elo;
+                c.Parameters["wins"].Value = stats.wins;
+                c.Parameters["losses"].Value = stats.losses;
+
+                command.ExecuteNonQuery();
             }
         }
     }
