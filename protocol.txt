@@ -1,34 +1,38 @@
-Protocol for MTCGame 						(Stand 15.01.2023, 23:00)
+Protocol for MTCGame 						(Stand 28.02.2023, 23:00)
 _____________________________________________________________________
 Design:
 	DB Tables: 'mtcgdb sql statements.txt'
 		ended up not using user.deck and decks at all
 		all cards with respective ownerids and states(stack/deck/etc) are saved to one table
 	VS-Solution:
-		mtcgame.server
+		MTCGame.server
 			includes executable
 			.HTTP
 			.MTCG
 				holds all endpoints
-		mtcgame.BL
+		MTCGame.BL
 			includes the to the endpoints corresponding handlers; handlers format data and connect to DAL
 			includes battlehandling with lobby, game and logs
-		mtcgame.DAL
+		MTCGame.DAL
 			one class to handle db
-		mtcg.model
+		MTCGame.Model
 			only actually uses User, Package and Card
-		mtcgame and mtcg.client not used
+		MTCGame.Test
+			holds all Unit Tests
+		MTCGame and MTCGame.Client not used
 _____________________________________________________________________
 Lessons Learned:
 	break up big projects into small goals and even smaller bullet points on a todo list to work at over time, they become far easier to manage and far less daunting
+		(it also becomes easier to pick a project back up after some time if the completed parts and future todos are noted)
 _____________________________________________________________________
 Unit Tests:
-	The chosen Unit Tests test the implementation of the Class Card in order to facilitate the further implementation of the battle logic
+	With the Unit Tests for Card.Attack() and Card.IsEffectiveAgainst() I went for a more test-driven approach by implementing the unit-tests beforehand to help in correctly implementing these methods
+	most unit tests however were simply chosen and implemented afterwards for their relative ease of implementation with the time restraints of the project in mind
 _____________________________________________________________________
 Unique Feature:
-	At the moment the unique feature unfortunately consists of cards completely ignoring the cardtype/element they are fighting against
+	No specific unique feature implemented
 _____________________________________________________________________
-Time Spent: ~ 55 hours, estimated 60% done
+Time Spent: ~ 70 hours (estimated 75% done)
 _____________________________________________________________________
 Github: https://github.com/Miriaana/MonsterTradingCardsGame_2022
 _____________________________________________________________________

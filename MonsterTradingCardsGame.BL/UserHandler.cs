@@ -24,7 +24,17 @@ namespace MTCGame.BL
         {
             var repo = new PostgreSQLRepository();
 
-            return repo.GetUser(mtcgAuth, user);
+            string auth = repo.CheckAuthorization(mtcgAuth);
+            if (string.IsNullOrEmpty(auth))
+            {
+                throw new Exception("401: Access token is missing or invalid");
+            }
+            if (auth != user.Username)
+            {
+                throw new Exception("401: Access token is missing or invalid");
+            }
+
+            return repo.GetUser(user);
         }
 
         //UpdateUserProfile
@@ -32,12 +42,17 @@ namespace MTCGame.BL
         {
             var repo = new PostgreSQLRepository();
 
-            //yeah, but do you update and what do you not
-            repo.UpdateProfile(mtcgAuth, user);
+            string auth = repo.CheckAuthorization(mtcgAuth);
+            if (string.IsNullOrEmpty(auth))
+            {
+                throw new Exception("401: Access token is missing or invalid");
+            }
+            if (auth != user.Username)
+            {
+                throw new Exception("401: Access token is missing or invalid");
+            }
+
+            repo.UpdateProfile(user);
         }
-
-        //unregister()
-
-        //changeProfile()
     }
 }

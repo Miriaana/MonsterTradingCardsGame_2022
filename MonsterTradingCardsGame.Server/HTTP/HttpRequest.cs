@@ -10,7 +10,7 @@ namespace MTCGame.Server.HTTP
 {
     public class HttpRequest
     {
-        private StreamReader reader;
+        private readonly StreamReader reader;
 
         public EHttpMethod Method { get; private set; }
         public List<string> Path { get; private set; } //string[]
@@ -44,7 +44,29 @@ namespace MTCGame.Server.HTTP
                 Console.WriteLine("Not able to correctly parse first line");
                 throw new Exception("400: Invalid Http Request");
             }
-            Method = (EHttpMethod)Enum.Parse(typeof(EHttpMethod), firstLineParts[0]); //error handling
+            //parse method
+            
+            EHttpMethod resultMethod;
+            if (Enum.TryParse(firstLineParts[0], out resultMethod))
+            {
+                if (Enum.IsDefined(typeof(EHttpMethod), resultMethod) | resultMethod.ToString().Contains(","))
+                {
+                    Method = resultMethod;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid Http Method");
+                    throw new Exception("400: Invalid Http Request");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid Http Method");
+                throw new Exception("400: Invalid Http Request");
+            }
+
+            //Method = (EHttpMethod)Enum.Parse(typeof(EHttpMethod), firstLineParts[0]); //error handling
+
             ProtocolVersion = firstLineParts[2];
 
             var fullPath = firstLineParts[1];

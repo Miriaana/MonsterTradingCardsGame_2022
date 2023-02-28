@@ -31,9 +31,9 @@ namespace MTCGame.DAL
                     IDbCommand command = connection.CreateCommand();
                     command.CommandText = @"
 insert into users 
-    (Username, Password, Coins, Elo) 
+    (Username, Password, Coins, Elo, Profilename, Image, Bio) 
 values
-    (@USERNAME, @PASSWORD, @COINS, @ELO)
+    (@USERNAME, @PASSWORD, @COINS, @ELO, @USERNAME, '', '')
 ";
 
                     NpgsqlCommand c = command as NpgsqlCommand;
@@ -58,15 +58,84 @@ values
             }
         }
 
-        public User GetUser(string mtcgAuth, User user)
+        //return user profilename, Image and Bio
+        public User GetUser(User user)
         {
-            Console.WriteLine("getting user info");
-            return user;
+            using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                {
+                    IDbCommand command = connection.CreateCommand();
+                    command.CommandText = @"
+select profilename, image, bio
+from users 
+where username=@Username
+";
+
+                    NpgsqlCommand c = command as NpgsqlCommand;
+
+                    c.Parameters.Add("Username", NpgsqlDbType.Varchar, 255);
+
+                    c.Prepare();
+
+                    c.Parameters["Username"].Value = user.Username;
+
+                    Console.WriteLine("executing db query - get user profile");
+
+                    IDataReader reader = command.ExecuteReader();
+                    if (!reader.Read())
+                    {
+                        throw new Exception("404: User not found");
+                    }
+
+                    user.Name = reader.GetString(0) ?? ""; 
+                    user.Image = reader.GetString(1) ?? "";
+                    user.Bio = reader.GetString(2) ?? "";
+
+                    reader.Close();
+
+                    Console.WriteLine(user);
+                    return user;
+                }
+            }
         }
 
-        public void UpdateProfile(string mtcgAuth, User user) 
+        //update user profilename, Image and Bio
+        public void UpdateProfile(User user) 
         {
-            Console.WriteLine("updating profile");
+            using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                /*IDbConnection connection = new NpgsqlConnection("Host=localhost;Username=swe1user;Password=swe1pw;Database=mtcgdb");
+            connection.Open();
+            Console.WriteLine($"Connection open");*/
+                {
+                    IDbCommand command = connection.CreateCommand();
+                    command.CommandText = @"
+UPDATE users
+SET profilename = COALESCE(@ProfileName, profilename, ''), 
+    bio = COALESCE(@Bio, bio, ''), 
+    image = COALESCE(@Image, image, '')
+WHERE username = @Username;
+";
+
+                    NpgsqlCommand c = command as NpgsqlCommand;
+
+                    c.Parameters.Add("Username", NpgsqlDbType.Varchar, 255);
+                    c.Parameters.Add("ProfileName", NpgsqlDbType.Varchar, 255);
+                    c.Parameters.Add("Bio", NpgsqlDbType.Varchar, 255);
+                    c.Parameters.Add("Image", NpgsqlDbType.Varchar, 255);
+
+                    c.Prepare();
+
+                    c.Parameters["Username"].Value = user.Username;
+                    c.Parameters["ProfileName"].Value = user.Name;
+                    c.Parameters["Bio"].Value = user.Bio;
+                    c.Parameters["Image"].Value = user.Image;
+
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         public string CreateSession(User user)

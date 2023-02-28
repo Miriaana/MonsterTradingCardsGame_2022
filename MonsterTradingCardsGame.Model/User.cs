@@ -14,7 +14,7 @@
         public List<Card>? Stack;// { get; set; } 
         public int? Elo;// { get; set; }
         //todo: revise to set to private and revise to set nonnullable
-        public string? ProfileName { get; set; }
+        public string? Name { get; set; } //Profilename
         public string? Image { get; set; }
         public string? Bio { get; set; }
 
@@ -31,6 +31,17 @@
 
         public User()
         {
+        }
+
+        public string ShowProfile()
+        {
+            string line = string.Empty;
+            line += $"{Username}'s profile:";
+            line += $"\n\tName:  {Name}";
+            line += $"\n\tBio:   {Bio}";
+            line += $"\n\tImage: {Image}";
+
+            return line;
         }
 
         public override string ToString() { 

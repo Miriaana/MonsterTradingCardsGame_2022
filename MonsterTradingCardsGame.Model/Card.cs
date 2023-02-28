@@ -118,13 +118,95 @@ namespace MTCGame.Model
             //init 
             BattleDamage = Damage;
             BattleText = string.Empty;
-    }
+        }
 
-        public void Attack(Card card)
+        public void Attack(Card enemy)
         {
-
+            //set base damage
             BattleDamage = (int)Damage;
             BattleText = string.Empty;
+
+            //pure Monsterfight -> Element (usually) not relevant
+            if (MajorType==MajorCardType.Monster && enemy.MajorType == MajorCardType.Monster)
+            {
+                //Exceptions (monster- or elemental weaknesses)
+                if(MinorType == MinorCardType.Goblin && enemy.MinorType == MinorCardType.Dragon)
+                {
+                    BattleDamage = 0.0f;
+                }
+                else if (MinorType == MinorCardType.Ork && enemy.MinorType == MinorCardType.Wizzard)
+                {
+                    BattleDamage = 0.0f;
+                }
+                else if (MinorType == MinorCardType.Dragon && enemy.MinorType == MinorCardType.Elf && enemy.Element == CardElement.fire)
+                {
+                    BattleDamage = 0.0f;
+                }
+                //ordinary Monsterfight
+                else
+                {
+                    //keeps ordinary battle damage
+                }
+        
+            }
+
+            //pure Spellfight or mixed fight -> Element relevant
+            else
+            {
+                //Exceptions (monster- or elemental weaknesses)
+                if (MinorType == MinorCardType.Knight && enemy.Element == CardElement.water)
+                {
+                    BattleDamage = 0.0f;
+                }
+                else if (enemy.MinorType == MinorCardType.Kraken)
+                {
+                    BattleDamage = 0.0f;
+                }
+                //ordinary Spell-/mixed fight
+                else
+                {
+                    
+                    if(1 == IsEffectiveAgainst(enemy.Element))
+                        //this cards element is strong/effective
+                    {
+                        BattleDamage *= 2;
+                    }
+                    else if (-1 == IsEffectiveAgainst(enemy.Element))
+                        //this cards element is weak/not effective
+                    {
+                        BattleDamage /= 2;
+                    }
+                    //else no effect (cards have same element)
+                }
+            }
+        }
+
+        public int IsEffectiveAgainst(CardElement enemyElement)
+        {
+            if(Element == CardElement.regular)
+            {
+                if (enemyElement == CardElement.water)
+                    return 1;
+                else if (enemyElement == CardElement.fire)
+                    return -1;
+            }
+            else if (Element == CardElement.water)
+            {
+                if (enemyElement == CardElement.fire)
+                    return 1;
+                else if (enemyElement == CardElement.regular)
+                    return -1;
+            }
+            else if (Element == CardElement.fire)
+            {
+                if (enemyElement == CardElement.regular)
+                    return 1;
+                else if (enemyElement == CardElement.water)
+                    return -1;
+            }
+
+            //else Elements are the same
+            return 0;
         }
     }
 }
