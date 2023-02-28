@@ -16,8 +16,8 @@ namespace MTCGame.Server.MTCG
         {
             switch (rq.Method)
             {
-                case EHttpMethod.POST:
-                    CreateSession(rq, rs);
+                case EHttpMethod.GET:
+                    GetStats(rq, rs);
                     break;
                 default:
                     Console.WriteLine("404 req method not found"); //change: return error or set rs
@@ -25,16 +25,17 @@ namespace MTCGame.Server.MTCG
             }
         }
 
-        private void CreateSession(HttpRequest rq, HttpResponse rs)
+        private void GetStats(HttpRequest rq, HttpResponse rs)
         {
             try
             {
-                var user = JsonSerializer.Deserialize<User>(rq.Content);//note: move user to model
-                // call BL
-                new UserHandler().CreateUser(user); //change?
+                string mtcgAuth = rq.GetToken();
+                Stats stats = new StatHandler().GetStats(mtcgAuth);
 
                 rs.ResponseCode = 200;
-                rs.ResponseText = "User login successful";
+                rs.ResponseText = "The stats could be retrieved successfully.";
+                rs.Headers["Content-Type"] = "application/javascript";
+                rs.ResponseContent = JsonSerializer.Serialize(stats);
             }
             catch (Exception ex)
             {

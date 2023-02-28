@@ -31,9 +31,9 @@ namespace MTCGame.DAL
                     IDbCommand command = connection.CreateCommand();
                     command.CommandText = @"
 insert into users 
-    (Username, Password, Coins, Elo, Profilename, Image, Bio) 
+    (Username, Password, Coins, Elo, Wins, Losses, Profilename, Image, Bio) 
 values
-    (@USERNAME, @PASSWORD, @COINS, @ELO, @USERNAME, '', '')
+    (@USERNAME, @PASSWORD, @COINS, @ELO, @WINS, @LOSSES, @USERNAME, '', '')
 ";
 
                     NpgsqlCommand c = command as NpgsqlCommand;
@@ -44,6 +44,8 @@ values
                     c.Parameters.Add("Password", NpgsqlDbType.Varchar, 255);
                     c.Parameters.Add("Coins", NpgsqlDbType.Integer);
                     c.Parameters.Add("Elo", NpgsqlDbType.Integer);
+                    c.Parameters.Add("Wins", NpgsqlDbType.Integer);
+                    c.Parameters.Add("Losses", NpgsqlDbType.Integer);
 
                     c.Prepare();
 
@@ -52,6 +54,8 @@ values
                     c.Parameters["Password"].Value = user.Password;
                     c.Parameters["Coins"].Value = 20;
                     c.Parameters["Elo"].Value = 0;
+                    c.Parameters["Wins"].Value = 0;
+                    c.Parameters["Losses"].Value = 0;
 
                     command.ExecuteNonQuery();
                 }
@@ -722,6 +726,39 @@ where username=@username and ownertype=@ownertype and status=@statusdeck";
                 c.Parameters["statusdeck"].Value = (int)CardStatus.deck;
 
                 command.ExecuteNonQuery();
+            }
+        }
+
+        public Stats GetStats(string username)
+        {
+            using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                IDbCommand command = connection.CreateCommand();
+                command.CommandText = @"
+select elo, wins, losses
+from users
+where username=@username";
+
+                NpgsqlCommand c = command as NpgsqlCommand;
+                c.Parameters.Add("username", NpgsqlDbType.Varchar, 255);
+                c.Prepare();
+                c.Parameters["username"].Value = username;
+
+                Stats stats = new Stats();
+                IDataReader reader = command.ExecuteReader();
+                if (!reader.Read())
+                {
+                    throw new Exception("404: User not found");
+                }
+
+                stats.elo = reader.GetInt32(0);
+                stats.wins = reader.GetInt32(1);
+                stats.losses = reader.GetInt32(2);
+
+                reader.Close();
+
+                return stats;
             }
         }
     }

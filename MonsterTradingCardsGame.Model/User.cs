@@ -12,7 +12,9 @@
         public int? Coins;// { get; set; }       //private int _coins;          //opt. class: wallet
         public List<Card>? Deck;// { get; set; }
         public List<Card>? Stack;// { get; set; } 
-        public int? Elo;// { get; set; }
+        public int? Elo { get; set; }
+        public int? Wins { get; set; }
+        public int? Losses { get; set; }
         //todo: revise to set to private and revise to set nonnullable
         public string? Name { get; set; } //Profilename
         public string? Image { get; set; }
