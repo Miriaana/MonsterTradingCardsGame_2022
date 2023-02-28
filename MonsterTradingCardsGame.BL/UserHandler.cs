@@ -29,6 +29,10 @@ namespace MTCGame.BL
             {
                 throw new Exception("401: Access token is missing or invalid");
             }
+            if (auth != user.Username)
+            {
+                throw new Exception("401: Access token is missing or invalid");
+            }
 
             return repo.GetUser(user);
         }
@@ -40,6 +44,10 @@ namespace MTCGame.BL
 
             string auth = repo.CheckAuthorization(mtcgAuth);
             if (string.IsNullOrEmpty(auth))
+            {
+                throw new Exception("401: Access token is missing or invalid");
+            }
+            if (auth != user.Username)
             {
                 throw new Exception("401: Access token is missing or invalid");
             }

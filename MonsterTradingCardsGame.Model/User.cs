@@ -33,6 +33,17 @@
         {
         }
 
+        public string ShowProfile()
+        {
+            string line = string.Empty;
+            line += $"{Username}'s profile:";
+            line += $"\n\tName:  {Name}";
+            line += $"\n\tBio:   {Bio}";
+            line += $"\n\tImage: {Image}";
+
+            return line;
+        }
+
         public override string ToString() { 
             return Username; 
         }

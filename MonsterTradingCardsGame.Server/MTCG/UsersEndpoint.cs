@@ -75,7 +75,7 @@ namespace MTCGame.Server.MTCG
                 rs.ResponseCode = 200;
                 rs.ResponseText = "Data successfully retrieved";
                 rs.Headers["Content-Type"] = "application/javascript";
-                rs.ResponseContent = JsonSerializer.Serialize(user);
+                rs.ResponseContent = user.ShowProfile();
             }
             catch (Exception ex)
             {
