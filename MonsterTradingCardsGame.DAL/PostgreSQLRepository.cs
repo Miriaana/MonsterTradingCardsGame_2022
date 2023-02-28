@@ -2,15 +2,14 @@
 using MTCGame.Model;
 using Npgsql;
 using NpgsqlTypes;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
-using System.Security.Cryptography.X509Certificates;
-using System.Xml.Linq;
+//using System.Diagnostics.CodeAnalysis;
+//using System.Drawing;
+//using System.Reflection.Metadata;
+//using System.Reflection.PortableExecutable;
+//using System.Security.Cryptography.X509Certificates;
+//using System.Xml.Linq;
 
 namespace MTCGame.DAL
 {
@@ -42,7 +41,7 @@ values
                     //c.Parameters.Add("UserId", NpgsqlDbType.Integer);
                     c.Parameters.Add("Username", NpgsqlDbType.Varchar, 50);
 
-                    c.Parameters.Add("Password", NpgsqlDbType.Varchar, 50);
+                    c.Parameters.Add("Password", NpgsqlDbType.Varchar, 255);
                     c.Parameters.Add("Coins", NpgsqlDbType.Integer);
                     c.Parameters.Add("Elo", NpgsqlDbType.Integer);
 

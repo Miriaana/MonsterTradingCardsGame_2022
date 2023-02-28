@@ -13,6 +13,11 @@ namespace MTCGame.Server.MTCG
 {
     public class UsersEndpoint : IHttpEndpoint
     {
+        public void CreateUser()
+        {
+            throw new NotImplementedException();
+        }
+
         public void HandleRequest(HttpRequest rq, HttpResponse rs)
         {
             switch (rq.Method)

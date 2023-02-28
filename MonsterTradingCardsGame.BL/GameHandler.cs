@@ -38,13 +38,13 @@ namespace MTCGame.BL
                 Card card2 = Player2.Deck.First();
                 //player 1 attack
                 card1.Attack(card2);
-                if(card1.BattleText!= null && card1.BattleText != string.Empty)
+                //if(card1.BattleText!= null && card1.BattleText != string.Empty)
                 {
                     Log1.LogLine(card1.BattleText);
                 }
                 //player 2 attack
                 card2.Attack(card1);
-                if (card2.BattleText != null && card2.BattleText != string.Empty)
+                //if (card2.BattleText != null && card2.BattleText != string.Empty)
                 {
                     Log2.LogLine(card2.BattleText);
                 }
@@ -92,7 +92,7 @@ namespace MTCGame.BL
                 Log1.LogLine($"\n\tDraw!\n");
                 Log2.LogLine($"\n\tDraw!\n");
             }
-
+            
 
             //---------------------------------------
             //game finished

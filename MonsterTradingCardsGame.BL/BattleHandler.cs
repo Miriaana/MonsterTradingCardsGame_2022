@@ -36,7 +36,7 @@ namespace MTCGame.BL
             {
                 card.FillTypes();
             }
-
+            
             //join lobby and wait until battle is finished
             BattleLog battleLog = new Lobby().Join(player);
 

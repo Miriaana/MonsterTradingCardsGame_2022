@@ -25,7 +25,7 @@ namespace MTCGame.Model
         public MinorCardType? MinorType { get; set; }
         public CardElement Element { get; set; }
 
-        public int? BattleDamage { get; set; }
+        public float? BattleDamage { get; set; }
         public string? BattleText { get; set; }
 
         //protected string _name;
@@ -116,12 +116,13 @@ namespace MTCGame.Model
             }
             
             //init 
-            BattleDamage = (int)Damage;
+            BattleDamage = Damage;
             BattleText = string.Empty;
     }
 
         public void Attack(Card card)
         {
+
             BattleDamage = (int)Damage;
             BattleText = string.Empty;
         }

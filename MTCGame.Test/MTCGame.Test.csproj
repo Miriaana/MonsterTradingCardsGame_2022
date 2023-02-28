@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
-    <PackageReference Include="Moq" Version="4.18.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageReference Include="Moq" Version="4.18.4" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
@@ -19,6 +19,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MonsterTradingCardsGame.BL\MTCGame.BL.csproj" />
+    <ProjectReference Include="..\MonsterTradingCardsGame.DAL\MTCGame.DAL.csproj" />
+    <ProjectReference Include="..\MonsterTradingCardsGame.Model\MTCGame.Model.csproj" />
+    <ProjectReference Include="..\MonsterTradingCardsGame.Server\MTCGame.Server.csproj" />
   </ItemGroup>
 
 </Project>
