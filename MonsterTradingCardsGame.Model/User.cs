@@ -14,7 +14,7 @@
         public List<Card>? Stack;// { get; set; } 
         public int? Elo;// { get; set; }
         //todo: revise to set to private and revise to set nonnullable
-        public string? ProfileName { get; set; }
+        public string? Name { get; set; } //Profilename
         public string? Image { get; set; }
         public string? Bio { get; set; }
 

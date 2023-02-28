@@ -13,11 +13,6 @@ namespace MTCGame.Server.MTCG
 {
     public class UsersEndpoint : IHttpEndpoint
     {
-        public void CreateUser()
-        {
-            throw new NotImplementedException();
-        }
-
         public void HandleRequest(HttpRequest rq, HttpResponse rs)
         {
             switch (rq.Method)
@@ -85,11 +80,11 @@ namespace MTCGame.Server.MTCG
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception: {ex.Message}");
-                if (ex.Message.StartsWith("0"))
+                if (ex.Message.StartsWith("401"))
                 {
                     rs.ResponseCode = 401;
                     rs.ResponseText = "Access token is missing or invalid";
-                }else if (ex.Message.StartsWith("1"))
+                }else if (ex.Message.StartsWith("404"))
                 {
                     rs.ResponseCode = 404;
                     rs.ResponseText = "User not found.";
@@ -109,20 +104,25 @@ namespace MTCGame.Server.MTCG
             try
             {
                 var user = JsonSerializer.Deserialize<User>(rq.Content);
-                //var user = new User(rq.Path[1]);
+                user.Username = rq.Path[1];
                 string mtcgAuth = rq.GetToken();
-                new UserHandler().UpdateUserProfile(mtcgAuth, user); //change?
+                new UserHandler().UpdateUserProfile(mtcgAuth, user);
 
                 rs.ResponseCode = 201;
-                rs.ResponseText = "User successfully created";
+                rs.ResponseText = "User sucessfully updated.";
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception: {ex.Message}");
-                if (ex.Message.StartsWith("0"))
+                if (ex.Message.StartsWith("401"))
                 {
-                    rs.ResponseCode = 409;
-                    rs.ResponseContent = "User with same username already registered";
+                    rs.ResponseCode = 401;
+                    rs.ResponseContent = "Access token is missing or invalid";
+                }
+                else if (ex.Message.StartsWith("404"))
+                {
+                    rs.ResponseCode = 404;
+                    rs.ResponseContent = "User not found.";
                 }
                 else
                 {

@@ -10,7 +10,7 @@ namespace MTCGame.Server.HTTP
 {
     public class HttpRequest
     {
-        private StreamReader reader;
+        private readonly StreamReader reader;
 
         public EHttpMethod Method { get; private set; }
         public List<string> Path { get; private set; } //string[]
