@@ -46,7 +46,7 @@ namespace MTCGame.Test
             Assert.That(expectedLog, Is.EqualTo(logs.LogString));
         }
 
-        
+
         [TestCase("Knight", 1.0f)]
         [TestCase("WaterGoblin", 14.0f)]
         [TestCase("WaterGoblin", 14)]
@@ -87,7 +87,7 @@ namespace MTCGame.Test
 
             Assert.Throws<Exception>(() => card.FillTypes());
         }
-        
+
         [TestCase("WaterSpell", MajorCardType.Spell)]
         [TestCase("FireElf", MajorCardType.Monster)]
         [TestCase("WaterGoblin", MajorCardType.Monster)]
@@ -173,7 +173,25 @@ namespace MTCGame.Test
             //Assert
             Assert.That(expectedDamage, Is.EqualTo(card1.BattleDamage));
         }
-        
+
+        [TestCase(CardElement.regular, CardElement.regular, 0)]
+        [TestCase(CardElement.water, CardElement.water, 0)]
+        [TestCase(CardElement.fire, CardElement.fire, 0)]
+        [TestCase(CardElement.regular, CardElement.water, 1)]
+        [TestCase(CardElement.regular, CardElement.fire, -1)]
+        [TestCase(CardElement.water, CardElement.fire, 1)]
+        [TestCase(CardElement.water, CardElement.regular, -1)]
+        [TestCase(CardElement.fire, CardElement.regular, 1)]
+        [TestCase(CardElement.fire, CardElement.water, -1)]
+        public void Card_IsEffectiveAgainst_ReturnsExpectedValue(CardElement element, CardElement enemyElement, int expectedEffectiveness)
+        {
+            Card card = new Card();
+            card.Element = element;
+
+            Assert.That(card.IsEffectiveAgainst(enemyElement), Is.EqualTo(expectedEffectiveness));
+        }
+
+
         [TestCase("PUT /deck HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nAuthorization: Bearer altenhof-mtcgToken\nContent-Length: 160\n\n[\"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"d6e9c720-9b5a-40c7-a6b2-bc34752e3463\", \"d60e23cf-2238-4d49-844f-c7589ee5342e\", \"02a9c76e-b17d-427f-9240-2dd49b0d3bfd\"]")]
         [TestCase("PUT /sessions HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json")]
         [TestCase("POST /users HTTP/1.1\nHost: localhost:10001\nUser-Agent: curl/7.83.1\nAccept: */*\nContent-Type: application/json\nContent-Length: 46\n\n{\"Username\":\"admin\",    \"Password\":\"istrator\"}")]
